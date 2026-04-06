@@ -1,0 +1,52 @@
+{
+  "seed": 42,
+  "date_range": {
+    "start": "2024-02-01",
+    "end": "2026-02-28"
+  },
+  "counts": {
+    "sales_rows": 10000,
+    "product_rows": 216,
+    "customer_rows": 320,
+    "calendar_rows": 759,
+    "target_rows": 600
+  },
+  "negative_profit_rows": 1096,
+  "sales_channels": [
+    "Online",
+    "Store",
+    "Marketplace",
+    "Wholesale"
+  ],
+  "segments": [
+    "Consumer",
+    "Corporate",
+    "Home Office",
+    "Small Business"
+  ],
+  "categories": [
+    "Beauty",
+    "Electronics",
+    "Fashion",
+    "Grocery",
+    "Home",
+    "Sports"
+  ],
+  "validation": {
+    "worksheets": [
+      "xl/worksheets/sheet1.xml",
+      "xl/worksheets/sheet2.xml",
+      "xl/worksheets/sheet3.xml",
+      "xl/worksheets/sheet4.xml",
+      "xl/worksheets/sheet5.xml"
+    ],
+    "tables": [
+      "xl/tables/table1.xml",
+      "xl/tables/table2.xml",
+      "xl/tables/table3.xml",
+      "xl/tables/table4.xml",
+      "xl/tables/table5.xml"
+    ],
+    "file_size_bytes": 1008333
+  }
+}

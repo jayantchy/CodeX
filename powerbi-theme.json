@@ -1,0 +1,99 @@
+{
+  "name": "Retail Burst",
+  "dataColors": [
+    "#FF6B6B",
+    "#4ECDC4",
+    "#FFD166",
+    "#5E60CE",
+    "#2EC4B6",
+    "#F3722C",
+    "#118AB2",
+    "#EF476F"
+  ],
+  "background": "#F7F4EA",
+  "foreground": "#12324A",
+  "tableAccent": "#FF6B6B",
+  "good": "#2A9D8F",
+  "neutral": "#F4A261",
+  "bad": "#E63946",
+  "minimum": "#E8F7F5",
+  "center": "#FFD166",
+  "maximum": "#5E60CE",
+  "null": "#D9D9D9",
+  "visualStyles": {
+    "*": {
+      "*": {
+        "title": [
+          {
+            "show": true,
+            "fontColor": {
+              "solid": {
+                "color": "#12324A"
+              }
+            },
+            "fontSize": 13,
+            "fontFamily": "Segoe UI Semibold"
+          }
+        ],
+        "background": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            },
+            "transparency": 0
+          }
+        ],
+        "border": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#E6DFD0"
+              }
+            },
+            "radius": 12
+          }
+        ]
+      }
+    },
+    "card": {
+      "*": {
+        "labels": [
+          {
+            "color": {
+              "solid": {
+                "color": "#12324A"
+              }
+            },
+            "fontSize": 22
+          }
+        ],
+        "categoryLabels": [
+          {
+            "color": {
+              "solid": {
+                "color": "#6B7280"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "slicer": {
+      "*": {
+        "items": [
+          {
+            "fontColor": {
+              "solid": {
+                "color": "#12324A"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
