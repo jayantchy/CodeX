@@ -1295,6 +1295,17 @@ pre {
   .visual-panel:hover { transform: scale(1.01); }
   .pipeline { flex-wrap: wrap; justify-content: center; }
   .pipeline-stage::after { display: none; }
+
+  .mapper-layout {
+    flex-direction: column;
+    align-items: center;
+  }
+  .schema-panel {
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    top: 0;
+  }
 }
 
 @media (max-width: 768px) {
