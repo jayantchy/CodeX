@@ -45,8 +45,29 @@
         <div class="grid">
           <article class="step"><h3>1. Pin tools</h3><p>Agree on VS Code, Azure Logic Apps Standard extension, Azure Functions Core Tools, and Node/runtime versions for the team.</p></article>
           <article class="step"><h3>2. Open the root</h3><p>Open the Standard logic app project root, where <code>host.json</code>, <code>connections.json</code>, and workflow folders live.</p></article>
-          <article class="step"><h3>3. Restore local settings</h3><p>Each developer creates their own <code>local.settings.json</code>. Do not commit secrets or connection strings.</p></article>
+          <article class="step"><h3>3. Restore local settings</h3><p>Each developer creates their own root <code>local.settings.json</code> and, when needed, the matching <code>workflow-designtime/local.settings.json</code>.</p></article>
         </div>
+      </section>
+
+      <section class="band split">
+        <div>
+          <h2>Local settings template</h2>
+          <p class="lead">Use the same shape for the project root and the <code>workflow-designtime</code> folder. Keep real subscription, resource group, storage, and connector values local to each developer.</p>
+          <div class="callout">The JSON below is valid. The designer copy needs the same comma-separated properties; missing commas will stop the local runtime from reading the file.</div>
+        </div>
+        <pre><code>{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AzureWebJobsFeatureFlag": "EnableMultipleLanguageWorker",
+    "FUNCTIONS_EXTENSION_VERSION": "~4",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "WORKFLOWS_SUBSCRIPTION_ID": "",
+    "WORKFLOWS_RESOURCE_GROUP_NAME": "",
+    "WEBSITE_NODE_DEFAULT_VERSION": "~18",
+    "APP_KIND": "workflowapp"
+  }
+}</code></pre>
       </section>
 
       <section class="band split">
@@ -63,16 +84,29 @@
             </tbody>
           </table>
         </div>
-        <pre><code>{
-  "IsEncrypted": false,
-  "Values": {
-    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "FUNCTIONS_WORKER_RUNTIME": "node",
-    "WORKFLOWS_SUBSCRIPTION_ID": "",
-    "WORKFLOWS_RESOURCE_GROUP_NAME": "",
-    "APP_KIND": "workflowapp"
-  }
-}</code></pre>
+        <div class="card">
+          <h3>Recommended handoff rule</h3>
+          <p>Commit a sanitized <code>local.settings.sample.json</code> with placeholders, then ask each developer to create their real local files from that template.</p>
+          <p>For Data Mapper work, also commit <code>Artifacts/MapDefinitions</code>, <code>Artifacts/Maps</code>, <code>Artifacts/Schemas</code>, and any <code>Artifacts/DataMapper/Extensions</code> files.</p>
+        </div>
+      </section>
+
+      <section class="band">
+        <h2>Transfer a local workspace to another developer</h2>
+        <div class="grid">
+          <article class="step"><h3>1. Push the project root</h3><p>Source control should include workflow folders, <code>host.json</code>, <code>connections.json</code>, <code>Artifacts</code>, and shared VS Code recommendations such as <code>.vscode/extensions.json</code>.</p></article>
+          <article class="step"><h3>2. Recreate local settings</h3><p>The receiving developer creates root and <code>workflow-designtime</code> local settings from the sample file, then fills subscription, resource group, storage, and connector values.</p></article>
+          <article class="step"><h3>3. Open the correct folder</h3><p>Open the folder that contains <code>host.json</code>. Opening a workflow subfolder or <code>Artifacts</code> folder can make the designer fail to recognize the project.</p></article>
+        </div>
+      </section>
+
+      <section class="band">
+        <h2>Transfer into a Standard Logic App</h2>
+        <div class="grid">
+          <article class="step"><h3>From Azure to local</h3><p>In the Azure portal, open the Standard Logic App, use <strong>Download app content</strong>, then open the downloaded project or workspace in VS Code.</p></article>
+          <article class="step"><h3>From local to Azure</h3><p>Deploy the Standard logic app project to an existing or new Standard Logic App resource. The package must place workflow folders, <code>host.json</code>, and <code>connections.json</code> at the zip root.</p></article>
+          <article class="step"><h3>After deployment</h3><p>Update app settings, connection references, managed API connections, and access policies for the target environment. Local connection metadata is not automatically production-ready.</p></article>
+        </div>
       </section>
 
       <section class="band">
