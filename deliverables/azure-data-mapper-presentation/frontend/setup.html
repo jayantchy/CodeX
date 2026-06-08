@@ -92,21 +92,57 @@
       </section>
 
       <section class="band">
-        <h2>Transfer a local workspace to another developer</h2>
-        <div class="grid">
-          <article class="step"><h3>1. Push the project root</h3><p>Source control should include workflow folders, <code>host.json</code>, <code>connections.json</code>, <code>Artifacts</code>, and shared VS Code recommendations such as <code>.vscode/extensions.json</code>.</p></article>
-          <article class="step"><h3>2. Recreate local settings</h3><p>The receiving developer creates root and <code>workflow-designtime</code> local settings from the sample file, then fills subscription, resource group, storage, and connector values.</p></article>
-          <article class="step"><h3>3. Open the correct folder</h3><p>Open the folder that contains <code>host.json</code>. Opening a workflow subfolder or <code>Artifacts</code> folder can make the designer fail to recognize the project.</p></article>
+        <h2>Best team handoff model</h2>
+        <p class="lead">For normal collaboration, do not pass around exported zip files. Use Git as the source of truth for the VS Code workspace, and reserve export/package flows for bootstrapping from Azure or recovering a portal-created app.</p>
+        <div class="grid two">
+          <article class="card">
+            <h3>Recommended repo shape</h3>
+            <p>Keep the Logic App Standard project and custom code project as sibling folders in one repo or one VS Code <code>.code-workspace</code>. For the screenshot, that means <code>TestSTdLA</code> and <code>FnStdLA</code> stay side by side.</p>
+          </article>
+          <article class="card">
+            <h3>Why this avoids drift</h3>
+            <p>Developers clone one repo, open the workspace root, restore local-only settings from samples, and let CI/CD deploy the same committed project files. No one depends on another machine's designer cache.</p>
+          </article>
         </div>
       </section>
 
       <section class="band">
-        <h2>Transfer into a Standard Logic App</h2>
+        <h2>What to commit from this workspace</h2>
+        <table class="table">
+          <thead><tr><th>Path in your screenshot</th><th>Decision</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td><code>TestSTdLA/Artifacts/DataMapper</code>, <code>Maps</code>, <code>Rules</code>, <code>Schemas</code></td><td>Commit</td><td>These are integration assets. Data Mapper design, generated XSLT, schemas, and rules must travel with the workflow.</td></tr>
+            <tr><td><code>TestSTdLA/Stateful1/workflow.json</code></td><td>Commit</td><td>The workflow definition is deployable source, not local state.</td></tr>
+            <tr><td><code>TestSTdLA/host.json</code>, <code>connections.json</code>, <code>.funcignore</code></td><td>Commit</td><td>They define runtime behavior, connector references, and deployment packaging.</td></tr>
+            <tr><td><code>TestSTdLA/local.settings.json</code></td><td>Do not commit</td><td>This can contain local storage, subscription, resource group, connector, and secret values. Commit <code>local.settings.sample.json</code> instead.</td></tr>
+            <tr><td><code>TestSTdLA/workflow-designtime/local.settings.json</code></td><td>Do not commit</td><td>The designer also needs local app settings, but every developer should create their own copy from a sample.</td></tr>
+            <tr><td><code>TestSTdLA/.debug</code></td><td>Ignore</td><td>Debug state is machine-generated and can break clean clones.</td></tr>
+            <tr><td><code>FnStdLA/FnStdLA.cs</code>, <code>FnStdLA.csproj</code></td><td>Commit</td><td>Custom code source and project files belong in source control.</td></tr>
+            <tr><td><code>FnStdLA/bin</code>, <code>FnStdLA/obj</code></td><td>Ignore</td><td>Build output is restored locally or in CI/CD.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="band">
+        <h2>Transfer to another developer</h2>
         <div class="grid">
-          <article class="step"><h3>From Azure to local</h3><p>In the Azure portal, open the Standard Logic App, use <strong>Download app content</strong>, then open the downloaded project or workspace in VS Code.</p></article>
-          <article class="step"><h3>From local to Azure</h3><p>Deploy the Standard logic app project to an existing or new Standard Logic App resource. The package must place workflow folders, <code>host.json</code>, and <code>connections.json</code> at the zip root.</p></article>
-          <article class="step"><h3>After deployment</h3><p>Update app settings, connection references, managed API connections, and access policies for the target environment. Local connection metadata is not automatically production-ready.</p></article>
+          <article class="step"><h3>1. Clone and open workspace</h3><p>Clone the repo, then open the repo root or the checked-in <code>.code-workspace</code>. Do not open only <code>Stateful1</code>, <code>Artifacts</code>, or the function project folder.</p></article>
+          <article class="step"><h3>2. Install the same tools</h3><p>Use a committed <code>.vscode/extensions.json</code> to recommend Azure Logic Apps Standard, Azure Functions, C#, and Azurite extensions. Pin team runtime expectations in the README.</p></article>
+          <article class="step"><h3>3. Create local settings</h3><p>Copy <code>local.settings.sample.json</code> into both the project root and <code>workflow-designtime</code> as needed, then fill developer-specific subscription, resource group, storage, and connector values.</p></article>
+          <article class="step"><h3>4. Restore and build code</h3><p>Restore the <code>FnStdLA</code> project and build it locally. Microsoft's custom-code guidance expects code and workflow projects to remain separate folders.</p></article>
+          <article class="step"><h3>5. Rebind cloud connectors</h3><p>Sign in to Azure from VS Code, validate <code>connections.json</code>, and reselect managed API connections if the designer prompts for subscription or resource group context.</p></article>
+          <article class="step"><h3>6. Smoke test the map</h3><p>Open Data Mapper, load the existing map, save once if the extension regenerates XSLT, then run a small local workflow test before pushing changes.</p></article>
         </div>
+      </section>
+
+      <section class="band">
+        <h2>Package vs Git vs deploy</h2>
+        <div class="grid">
+          <article class="step"><h3>Best for daily work</h3><p>Use Git. It preserves history, review comments, branches, and the exact set of committed Logic App, Data Mapper, and custom code files.</p></article>
+          <article class="step"><h3>Best for first import</h3><p>Use <strong>Export logic app</strong> or <strong>Create new logic app workspace from package</strong> when the source currently lives in Azure or arrives as a zip package.</p></article>
+          <article class="step"><h3>Best for Azure release</h3><p>Use CI/CD or VS Code <strong>Deploy to logic app</strong> after local files are clean. Replace environment values through app settings, parameters, access policies, and connection scripts.</p></article>
+        </div>
+        <div class="callout">Practical rule: package import is a migration tool; Git is the collaboration tool; CI/CD is the promotion tool.</div>
       </section>
 
       <section class="band">
