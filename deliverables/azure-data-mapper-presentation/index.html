@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="refresh" content="0; url=./frontend/index.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Azure Data Mapper Explorer</title>
     <style>
@@ -39,9 +38,15 @@
         color: #475569;
       }
 
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 20px;
+      }
+
       a {
         display: inline-flex;
-        margin-top: 12px;
         padding: 12px 18px;
         border-radius: 999px;
         background: linear-gradient(90deg, #00a4b4, #0078d4);
@@ -49,13 +54,33 @@
         font-weight: 700;
         text-decoration: none;
       }
+
+      a.secondary {
+        background: white;
+        color: #0f172a;
+        border: 1px solid rgba(15, 23, 42, 0.12);
+      }
+
+      code {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 8px 12px;
+        border-radius: 12px;
+        background: rgba(15, 23, 42, 0.06);
+        color: #0f172a;
+      }
     </style>
   </head>
   <body>
     <main>
       <h1>Azure Data Mapper Explorer</h1>
-      <p>The public root for this deliverable redirects to the interactive frontend so the site can be published cleanly.</p>
-      <a href="./frontend/index.html">Open the interactive frontend</a>
+      <p>The interactive frontend is published and available publicly from this page.</p>
+      <p>If your browser still remembers the older broken custom-domain redirect, use the direct frontend path below once and then bookmark the new URL.</p>
+      <code>https://jayantchy.github.io/CodeX/frontend/index.html</code>
+      <div class="actions">
+        <a href="./frontend/index.html">Open the interactive frontend</a>
+        <a class="secondary" href="./PUBLISHING.md">Open publishing guide</a>
+      </div>
     </main>
   </body>
 </html>
