@@ -279,6 +279,7 @@ const badgeDefinitions = [
 const categories = ["All", "Local testing", "Schemas", "Workspace", "Extension regressions", "Feature gaps"];
 const trackedSections = ["mission", "overview", "xslt", "issues", "team", "sources"];
 const STORAGE_KEY = "azure-data-mapper-game-state-v3";
+const THEME_STORAGE_KEY = "azure-data-mapper-theme-v1";
 
 const localSettingsSnippet = `{
   "IsEncrypted": false,
@@ -318,6 +319,10 @@ const quizRoot = document.getElementById("quiz-stack");
 const toastStack = document.getElementById("toast-stack");
 const resetProgressButton = document.getElementById("reset-progress");
 const sectionNavLinks = Array.from(document.querySelectorAll(".section-nav a"));
+const themeToggle = document.getElementById("theme-toggle");
+const themeToggleIcon = document.getElementById("theme-toggle-icon");
+const themeToggleValue = document.getElementById("theme-toggle-value");
+const systemThemeMedia = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
 
 let activeCategory = "All";
 let gameState = loadGameState();
@@ -346,6 +351,65 @@ function loadGameState() {
 
 function saveGameState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
+}
+
+function getStoredTheme() {
+  try {
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    return storedTheme === "light" || storedTheme === "dark" ? storedTheme : null;
+  } catch (_error) {
+    return null;
+  }
+}
+
+function getSystemTheme() {
+  return systemThemeMedia?.matches ? "dark" : "light";
+}
+
+function updateThemeToggle(theme) {
+  if (!themeToggle || !themeToggleIcon || !themeToggleValue) return;
+
+  const isDark = theme === "dark";
+  themeToggle.dataset.mode = theme;
+  themeToggle.setAttribute("aria-pressed", String(isDark));
+  themeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+  themeToggleIcon.textContent = isDark ? "MOON" : "SUN";
+  themeToggleValue.textContent = isDark ? "Dark mode" : "Light mode";
+}
+
+function applyTheme(theme, persist = false) {
+  const nextTheme = theme === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = nextTheme;
+  updateThemeToggle(nextTheme);
+
+  if (persist) {
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+    } catch (_error) {
+      // Ignore storage failures and keep the current in-memory theme.
+    }
+  }
+}
+
+function initializeTheme() {
+  applyTheme(document.documentElement.dataset.theme || getStoredTheme() || getSystemTheme());
+
+  if (systemThemeMedia?.addEventListener) {
+    systemThemeMedia.addEventListener("change", () => {
+      if (!getStoredTheme()) {
+        applyTheme(getSystemTheme());
+      }
+    });
+  }
+}
+
+function setThemeHandlers() {
+  if (!themeToggle) return;
+
+  themeToggle.addEventListener("click", () => {
+    const currentTheme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+    applyTheme(currentTheme === "dark" ? "light" : "dark", true);
+  });
 }
 
 function uniquePush(collection, value) {
@@ -834,6 +898,7 @@ function resetProgress() {
 }
 
 function initialize() {
+  initializeTheme();
   renderAccordion();
   renderCategoryChips();
   renderIssues();
@@ -843,6 +908,7 @@ function initialize() {
   setSnippets();
   setCopyHandlers();
   setTabHandlers();
+  setThemeHandlers();
   setSectionTracking();
   setManualNavTracking();
   renderGameUi();

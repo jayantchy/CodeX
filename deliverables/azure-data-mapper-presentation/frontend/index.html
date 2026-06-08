@@ -3,11 +3,43 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
     <title>Azure Data Mapper Research Explorer</title>
+    <script>
+      (function () {
+        try {
+          var key = "azure-data-mapper-theme-v1";
+          var storedTheme = localStorage.getItem(key);
+          if (storedTheme === "light" || storedTheme === "dark") {
+            document.documentElement.dataset.theme = storedTheme;
+            return;
+          }
+          if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            document.documentElement.dataset.theme = "dark";
+          }
+        } catch (_error) {
+          // Keep the default light palette if local storage is unavailable.
+        }
+      })();
+    </script>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <div class="page-shell">
+      <div class="utility-bar reveal">
+        <div class="utility-chip">
+          <span class="utility-kicker">Published handbook</span>
+          <strong>Gamified Azure Data Mapper explorer</strong>
+        </div>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-live="polite">
+          <span class="theme-toggle-icon" id="theme-toggle-icon" aria-hidden="true">SUN</span>
+          <span class="theme-toggle-copy">
+            <span class="theme-toggle-label">Theme</span>
+            <strong id="theme-toggle-value">Light mode</strong>
+          </span>
+        </button>
+      </div>
+
       <header class="hero" id="top">
         <div class="hero-copy reveal">
           <span class="eyebrow">Azure Logic Apps Standard</span>
