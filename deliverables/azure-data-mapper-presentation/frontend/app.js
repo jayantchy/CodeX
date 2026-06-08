@@ -114,6 +114,22 @@ function initQuiz() {
   updateScore();
 }
 
+function initScrollAnimations() {
+  const elements = document.querySelectorAll('section, .card, .step, .issue, .resource, .visual-panel, .hero-copy, .band');
+  elements.forEach(el => el.classList.add('animate-on-scroll'));
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  elements.forEach(el => observer.observe(el));
+}
+
 initTheme();
 initNav();
 initQuiz();
+initScrollAnimations();
