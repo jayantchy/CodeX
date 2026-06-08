@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="XSLT compatibility, element reference, and extensibility in Azure Data Mapper." />
+    <title>XSLT Compatibility</title>
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem("azure-data-mapper-theme-v2");
+          if (theme === "dark" || theme === "light") document.documentElement.dataset.theme = theme;
+          else if (matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.dataset.theme = "dark";
+        } catch (_error) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="topbar">
+        <a class="brand" href="./index.html"><span class="brand-mark">⚡</span><span>Azure Data Mapper</span></a>
+        <button class="hamburger" type="button" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+        <nav class="nav" aria-label="Primary">
+          <a href="./index.html">Canvas</a>
+          <a href="./how.html">How</a>
+          <a href="./setup.html">Setup</a>
+          <a href="./sample.html">Sample</a>
+          <a href="./xslt.html" aria-current="page">XSLT</a>
+          <a href="./issues.html">Issues</a>
+          <a href="./tips.html">Tips</a>
+          <a href="./learning.html">Learning</a>
+          <a href="./quiz.html">Quiz</a>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle>☾ Dark</button>
+      </div>
+      <div class="nav-overlay"></div>
+    </header>
+
+    <main class="page">
+      <section class="page-title">
+        <span class="kicker">XSLT Compatibility</span>
+        <h1>From XSLT 1.0 to 3.0</h1>
+        <p>Azure Logic Apps Standard uses the Saxon.NET engine, meaning the Data Mapper compiles everything down to standard, highly compatible <strong>XSLT 3.0</strong>. Here is how traditional XSLT functionality maps to the visual designer and extensions.</p>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           HOW IT'S EASILY DONE IN DATA MAPPER
+           ═══════════════════════════════════════════════════════ -->
+
+      <section class="band">
+        <h2>How it's easily done with Data Mapper</h2>
+        <p class="lead">Before writing raw XSLT, understand how Data Mapper visually replaces standard XSLT instructions. Data Mapper handles the heavy lifting of namespaces, looping, and document structure automatically.</p>
+
+        <div class="grid">
+          <article class="card">
+            <h3>Loops (<code>xsl:for-each</code>)</h3>
+            <p><strong>Data Mapper:</strong> Simply draw a line from a repeating source node (Array/List) to a repeating target node. Data Mapper automatically generates the <code>xsl:for-each</code> context loop.</p>
+          </article>
+          <article class="card">
+            <h3>Conditionals (<code>xsl:if</code>, <code>xsl:choose</code>)</h3>
+            <p><strong>Data Mapper:</strong> Use the <strong>If</strong> or <strong>Filter</strong> functions from the visual toolbox. Drag conditions onto target fields to control output logic without writing <code>xsl:when</code> blocks.</p>
+          </article>
+          <article class="card">
+            <h3>Value Mapping (<code>xsl:value-of</code>)</h3>
+            <p><strong>Data Mapper:</strong> Draw a direct line from a source field to a target field. Data Mapper generates the <code>&lt;xsl:value-of select="..."/&gt;</code> automatically behind the scenes.</p>
+          </article>
+          <article class="card">
+            <h3>Variables (<code>xsl:variable</code>)</h3>
+            <p><strong>Data Mapper:</strong> A single function node with multiple outputs visually represents a variable. Compute the value once (e.g., concatenate strings), and connect its output to multiple destinations.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           EXTENSIBILITY EXPLAINED
+           ═══════════════════════════════════════════════════════ -->
+
+      <section class="band split">
+        <div>
+          <h2>Data Mapper Extensions Explained</h2>
+          <p class="lead">When visual connections aren't enough, Data Mapper provides targeted ways to inject raw XSLT. These extensions bridge the gap between visual ease and XSLT 1.0–3.0 power.</p>
+        </div>
+
+        <div>
+          <div class="callout">
+            <h4>Custom XML Functions</h4>
+            <p><strong>What it is:</strong> A separate `.xml` file containing standard <code>xsl:function</code> definitions. Placed in <code>Artifacts/DataMapper/Extensions/Functions/</code>.<br>
+            <strong>How it compares:</strong> XSLT 1.0 lacked user-defined functions (relying on named templates). XSLT 2.0/3.0 introduced <code>xsl:function</code>. Data Mapper exposes these as custom, draggable blocks in the UI.<br>
+            <strong>Use case:</strong> Reusable math, date parsing, or lookup logic.</p>
+          </div>
+          
+          <div class="callout">
+            <h4>Inline XSLT Snippets</h4>
+            <p><strong>What it is:</strong> Targeted `.xslt` files placed in <code>Artifacts/DataMapper/Extensions/InlineXslt/</code>, invoked via the visual <strong>Run XSLT</strong> function.<br>
+            <strong>How it compares:</strong> Allows you to inject powerful XSLT 3.0 logic—like <code>xsl:apply-templates</code> for recursion, or complex <code>xsl:for-each-group</code> patterns—directly into a specific part of your visual map.<br>
+            <strong>Use case:</strong> Advanced grouping, recursion, or migrating legacy BizTalk snippets.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           ELEMENT COMPATIBILITY MATRIX
+           ═══════════════════════════════════════════════════════ -->
+
+      <section class="band">
+        <h2>XSLT Element Compatibility Matrix</h2>
+        <p class="lead">An exhaustive review of standard XSLT elements and how they operate within the Azure Data Mapper context (generated maps, Inline XSLT, or Custom Functions).</p>
+
+        <div style="overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface);">
+          <table class="table" style="border: none; margin: 0; min-width: 800px;">
+            <thead>
+              <tr>
+                <th>XSLT Element</th>
+                <th>XSLT Version Support</th>
+                <th>Data Mapper Behavior</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>xsl:stylesheet</code> / <code>xsl:transform</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Auto-Generated:</strong> Data Mapper creates the root element automatically, setting <code>version="3.0"</code>.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:output</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Auto-Generated:</strong> Managed by Data Mapper (typically <code>method="xml"</code> or <code>json</code> depending on target schema).</td>
+              </tr>
+              <tr>
+                <td><code>xsl:template</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Auto/Inline:</strong> Visual maps use a single root <code>match="/"</code>. For custom templates, use <strong>Inline XSLT</strong>.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:apply-templates</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Inline XSLT Only:</strong> Visual mapper relies on explicit loops. Use Inline XSLT for recursive template matching.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:value-of</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Auto-Generated:</strong> Created simply by connecting a source node to a target node.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:copy-of</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Auto/Inline:</strong> Can be achieved visually by mapping parent nodes, but deeper control requires Inline XSLT.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:choose</code>, <code>xsl:when</code>, <code>xsl:otherwise</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Auto-Generated:</strong> Generated by the visual <strong>If/Else</strong> functions.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:if</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Auto-Generated:</strong> Generated by using the visual <strong>Filter</strong> or logical functions.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:for-each</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Auto-Generated:</strong> Automatically applied when connecting repeating source arrays to repeating target arrays.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:variable</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Auto/Inline:</strong> Function outputs act as variables visually. Explicit variables require Custom Functions or Inline XSLT.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:param</code>, <code>xsl:with-param</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Custom/Inline:</strong> Fully supported inside Custom XML Functions and Inline XSLT snippets.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:function</code></td>
+                <td>2.0, 3.0</td>
+                <td><strong>Custom Functions Only:</strong> Define these in a `.xml` file to expose them as visual blocks in the toolbox.</td>
+              </tr>
+              <tr>
+                <td><code>xpath</code> functions/nodes/attributes</td>
+                <td>1.0, 2.0, 3.1</td>
+                <td><strong>Supported:</strong> Use the visual <strong>Execute XPath</strong> function to write raw XPath 3.1 queries against the payload.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:sort</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Inline XSLT Only:</strong> Visual mapper does not have a native "Sort" block. Use Inline XSLT.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:key</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Inline XSLT Only:</strong> The Muenchian grouping method (1.0) or fast lookups (2.0/3.0) must be written via Inline XSLT.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:for-each-group</code></td>
+                <td>2.0, 3.0</td>
+                <td><strong>Inline XSLT Only:</strong> XSLT 2.0+ native grouping. Must be written via Inline XSLT (highly recommended over <code>xsl:key</code> grouping).</td>
+              </tr>
+              <tr>
+                <td><code>xsl:include</code>, <code>xsl:import</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Managed:</strong> Data Mapper manages imports for Custom Functions automatically.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:strip-space</code>, <code>xsl:preserve-space</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Inline XSLT Only:</strong> White-space handling instructions must be provided via custom stylesheets.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:namespace-alias</code>, <code>namespace-uri</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Auto-Generated:</strong> Data Mapper resolves target schemas and handles namespace injection automatically.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:attribute</code>, <code>xsl:element</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Auto-Generated:</strong> Visual target mapping to an XML attribute generates <code>xsl:attribute</code> automatically.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:decimal-format</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Custom/Inline:</strong> If specialized number formatting is required, wrap it in a Custom XML Function.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:number</code>, <code>xsl:text</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Auto/Inline:</strong> Text injection is handled visually via string functions. Number sequencing requires Inline XSLT.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:message</code>, <code>xsl:fallback</code>, <code>xsl:processing-instruction</code>, <code>xsl:comment</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Inline XSLT Only:</strong> Low-level XML document manipulations require manual XSLT.</td>
+              </tr>
+              <tr>
+                <td><code>xsl:use-attribute-sets</code></td>
+                <td>1.0, 2.0, 3.0</td>
+                <td><strong>Inline XSLT Only:</strong> Defining and applying reusable attribute sets requires custom code.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-footer"><div class="inner"><span class="footer-logo">⚡ Azure Logic Apps</span> Saxon.NET fully supports W3C XSLT 3.0 specifications.</div></footer>
+    <script src="./app.js"></script>
+  </body>
+</html>

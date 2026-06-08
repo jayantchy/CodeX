@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
-    <title>Data Mapper Setup</title>
+    <meta name="description" content="Local project setup, workspace sharing, and direct deployment for Azure Logic Apps Standard with Data Mapper." />
+    <title>Data Mapper Setup & Deploy</title>
     <script>
       (function () {
         try {
@@ -19,26 +20,34 @@
   <body>
     <header class="site-header">
       <div class="topbar">
-        <a class="brand" href="./index.html"><span class="brand-mark">DM</span><span>Azure Data Mapper</span></a>
+        <a class="brand" href="./index.html"><span class="brand-mark">⚡</span><span>Azure Data Mapper</span></a>
+        <button class="hamburger" type="button" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
         <nav class="nav" aria-label="Primary">
-          <a href="./index.html">Intro</a>
+          <a href="./index.html">Canvas</a>
           <a href="./how.html">How</a>
           <a href="./setup.html">Setup</a>
           <a href="./sample.html">Sample</a>
+          <a href="./xslt.html">XSLT</a>
           <a href="./issues.html">Issues</a>
+          <a href="./tips.html">Tips</a>
           <a href="./learning.html">Learning</a>
           <a href="./quiz.html">Quiz</a>
         </nav>
-        <button class="theme-toggle" type="button" data-theme-toggle>Dark</button>
+        <button class="theme-toggle" type="button" data-theme-toggle>☾ Dark</button>
       </div>
+      <div class="nav-overlay"></div>
     </header>
 
     <main class="page">
       <section class="page-title">
-        <span class="kicker">Setup</span>
+        <span class="kicker">Setup & Deploy</span>
         <h1>Make local projects portable</h1>
-        <p>A team setup should let any developer clone the repo, restore local settings, open the Logic App Standard project root, and edit maps without machine-specific drift.</p>
+        <p>A team setup should let any developer clone the repo, restore local settings, open the Logic App Standard project root, edit maps without machine-specific drift, and deploy directly to Azure from VS Code.</p>
       </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           DEVELOPER BASELINE
+           ═══════════════════════════════════════════════════════ -->
 
       <section class="band">
         <h2>Developer machine baseline</h2>
@@ -48,6 +57,69 @@
           <article class="step"><h3>3. Restore local settings</h3><p>Each developer creates their own root <code>local.settings.json</code> and, when needed, the matching <code>workflow-designtime/local.settings.json</code>.</p></article>
         </div>
       </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           MAKING THE WORKSPACE SHAREABLE
+           ═══════════════════════════════════════════════════════ -->
+
+      <section class="band">
+        <h2>Making the workspace shareable</h2>
+        <p class="lead">The goal: any developer clones the repo, runs three setup steps, and has a working Data Mapper environment with all connections and visual maps intact. No zip files, no screenshots of settings, no "works on my machine".</p>
+
+        <div class="grid" style="margin-top: 24px;">
+          <article class="step">
+            <h3>1. Use a <code>.code-workspace</code> file</h3>
+            <p>Commit a VS Code workspace file that includes both the Logic App project and the custom code project as sibling folders. This ensures everyone opens the same root.</p>
+            <pre><code>{
+  "folders": [
+    { "path": "MyLogicApp" },
+    { "path": "MyCustomCode" }
+  ],
+  "settings": {
+    "azureLogicAppsStandard.autoRuntimeDependenciesValidation": true
+  }
+}</code></pre>
+          </article>
+
+          <article class="step">
+            <h3>2. Commit <code>extensions.json</code></h3>
+            <p>Pin the required extensions so VS Code prompts new developers to install them.</p>
+            <pre><code>{
+  "recommendations": [
+    "ms-azuretools.vscode-azurelogicapps",
+    "ms-azuretools.vscode-azurefunctions",
+    "ms-dotnettools.csharp",
+    "Azurite.azurite"
+  ]
+}</code></pre>
+            <p>Save at <code>.vscode/extensions.json</code>.</p>
+          </article>
+
+          <article class="step">
+            <h3>3. Use <code>local.settings.sample.json</code></h3>
+            <p>Commit a sanitized template with placeholders. Each developer copies this to <code>local.settings.json</code> and fills in their own values. Never commit the real file.</p>
+          </article>
+
+          <article class="step">
+            <h3>4. Preserve connections visually</h3>
+            <p>Commit <code>connections.json</code> with parameterized references. When a developer clones and opens the workspace, VS Code reads this file and restores the designer connections visually without manual re-creation.</p>
+          </article>
+
+          <article class="step">
+            <h3>5. Commit all Data Mapper artifacts</h3>
+            <p>The map definition (<code>.lml</code>), generated XSLT (<code>.xslt</code>), schemas, and extension functions must all be in Git. Missing any one breaks the visual editor or runtime.</p>
+          </article>
+
+          <article class="step">
+            <h3>6. Pin the extension version</h3>
+            <p>Current public issues suggest version drift causes real breakage. Document the exact extension version in the README and freeze it until the team tests the next release together.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           LOCAL SETTINGS TEMPLATE
+           ═══════════════════════════════════════════════════════ -->
 
       <section class="band split">
         <div>
@@ -61,7 +133,7 @@
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "AzureWebJobsFeatureFlag": "EnableMultipleLanguageWorker",
     "FUNCTIONS_EXTENSION_VERSION": "~4",
-    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "WORKFLOWS_SUBSCRIPTION_ID": "",
     "WORKFLOWS_RESOURCE_GROUP_NAME": "",
     "WEBSITE_NODE_DEFAULT_VERSION": "~18",
@@ -69,6 +141,47 @@
   }
 }</code></pre>
       </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           SYNCING LOCAL WORKSPACE — CONNECTIONS & VISUAL STATE
+           ═══════════════════════════════════════════════════════ -->
+
+      <section class="band">
+        <h2>Syncing workspace across developer machines</h2>
+        <p class="lead">The trickiest part of sharing a Standard Logic App project is preserving connections and visual state. Here's how to ensure nothing gets lost.</p>
+
+        <div class="grid two" style="margin-top: 24px;">
+          <article class="card">
+            <h3>What preserves connections</h3>
+            <p><code>connections.json</code> stores the connector definitions, authentication metadata, and runtime references. When committed to Git, any developer who clones and opens the project root will see the connectors in the designer — the visual links stay intact.</p>
+            <p>The key properties to watch:</p>
+            <ul style="color: var(--muted); line-height: 1.7;">
+              <li><code>managedApiConnections</code> — API connector references</li>
+              <li><code>serviceProviderConnections</code> — built-in connectors</li>
+              <li><code>connectionId</code> — must point to a valid Azure resource</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>What can break across machines</h3>
+            <ul style="color: var(--muted); line-height: 1.7;">
+              <li><strong>Missing <code>local.settings.json</code></strong> — designer won't start without required app settings</li>
+              <li><strong>Missing <code>workflow-designtime/local.settings.json</code></strong> — designer loses connection context</li>
+              <li><strong>Wrong VS Code folder opened</strong> — extension doesn't recognize the project</li>
+              <li><strong>Extension version mismatch</strong> — regenerated XSLT may differ</li>
+              <li><strong>Missing schemas</strong> — Data Mapper can't render the visual map</li>
+              <li><strong>Expired or missing Azure credentials</strong> — managed API connectors need re-auth</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="callout success" style="margin-top: 24px;">
+          <strong>Golden rule:</strong> If a developer clones the repo, creates <code>local.settings.json</code> from the sample, signs into Azure in VS Code, and opens the workspace file — everything should just work. If it doesn't, something is missing from Git.
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           COMMIT AND IGNORE
+           ═══════════════════════════════════════════════════════ -->
 
       <section class="band split">
         <div>
@@ -80,69 +193,82 @@
               <tr><td><code>Artifacts/MapDefinitions/*.lml</code></td><td><code>local.settings.json</code></td></tr>
               <tr><td><code>Artifacts/Maps/*.xslt</code></td><td><code>**/local.settings.json</code></td></tr>
               <tr><td><code>Artifacts/Schemas/*</code></td><td><code>.vscode/settings.json</code> if personal</td></tr>
-              <tr><td><code>workflow.json</code>, <code>connections.json</code>, <code>host.json</code></td><td>Raw keys, connection strings, and generated clutter</td></tr>
+              <tr><td><code>workflow.json</code>, <code>connections.json</code>, <code>host.json</code></td><td>Raw keys, connection strings, generated clutter</td></tr>
+              <tr><td><code>Artifacts/DataMapper/Extensions/*</code></td><td><code>.debug/</code>, <code>bin/</code>, <code>obj/</code></td></tr>
             </tbody>
           </table>
         </div>
         <div class="card">
-          <h3>Recommended handoff rule</h3>
-          <p>Commit a sanitized <code>local.settings.sample.json</code> with placeholders, then ask each developer to create their real local files from that template.</p>
-          <p>For Data Mapper work, also commit <code>Artifacts/MapDefinitions</code>, <code>Artifacts/Maps</code>, <code>Artifacts/Schemas</code>, and any <code>Artifacts/DataMapper/Extensions</code> files.</p>
+          <h3>Recommended <code>.gitignore</code></h3>
+          <pre><code># Logic Apps Standard local secrets
+local.settings.json
+**/local.settings.json
+
+# Debug state
+.debug/
+
+# Build output
+bin/
+obj/
+
+# VS Code personal settings
+.vscode/settings.json
+
+# OS noise
+.DS_Store
+Thumbs.db</code></pre>
         </div>
       </section>
 
+      <!-- ═══════════════════════════════════════════════════════
+           DIRECT DEPLOYMENT FROM VS CODE
+           ═══════════════════════════════════════════════════════ -->
+
       <section class="band">
-        <h2>Best team handoff model</h2>
-        <p class="lead">For normal collaboration, do not pass around exported zip files. Use Git as the source of truth for the VS Code workspace, and reserve export/package flows for bootstrapping from Azure or recovering a portal-created app.</p>
-        <div class="grid two">
-          <article class="card">
-            <h3>Recommended repo shape</h3>
-            <p>Keep the Logic App Standard project and custom code project as sibling folders in one repo or one VS Code <code>.code-workspace</code>. For the screenshot, that means <code>TestSTdLA</code> and <code>FnStdLA</code> stay side by side.</p>
+        <h2>Direct Deployment to Azure from VS Code</h2>
+        <p class="lead">For smaller teams or fast prototyping, you can deploy your local workspace directly to Azure without setting up a CI/CD pipeline. The Azure Logic Apps extension handles packaging and publishing.</p>
+
+        <div class="grid" style="margin-top: 24px;">
+          <article class="step">
+            <h3>1. Prepare your local workspace</h3>
+            <p>Ensure all maps are saved, XSLT is generated, and your local project is running successfully. Review your <code>connections.json</code> to ensure no local-only test connections will break in the cloud.</p>
           </article>
-          <article class="card">
-            <h3>Why this avoids drift</h3>
-            <p>Developers clone one repo, open the workspace root, restore local-only settings from samples, and let CI/CD deploy the same committed project files. No one depends on another machine's designer cache.</p>
+          
+          <article class="step">
+            <h3>2. Open the Azure extension</h3>
+            <p>Click the Azure icon in the Activity Bar. Under the <strong>Workspace</strong> section, ensure your Logic App project is recognized.</p>
+          </article>
+
+          <article class="step">
+            <h3>3. Deploy to Logic App</h3>
+            <p>Click the <strong>Deploy to Logic App</strong> icon (or right-click the project folder and select the option). Follow the prompts to select your Azure Subscription and the target Logic App (Standard) resource.</p>
+          </article>
+
+          <article class="step">
+            <h3>4. Configure Cloud App Settings</h3>
+            <p>Your <code>local.settings.json</code> is <strong>not deployed</strong>. You must manually configure any required settings (like connection string references or custom environment variables) in the Azure Portal under your Logic App's <strong>Configuration</strong> blade.</p>
           </article>
         </div>
-      </section>
-
-      <section class="band">
-        <h2>What to commit from this workspace</h2>
-        <table class="table">
-          <thead><tr><th>Path in your screenshot</th><th>Decision</th><th>Reason</th></tr></thead>
-          <tbody>
-            <tr><td><code>TestSTdLA/Artifacts/DataMapper</code>, <code>Maps</code>, <code>Rules</code>, <code>Schemas</code></td><td>Commit</td><td>These are integration assets. Data Mapper design, generated XSLT, schemas, and rules must travel with the workflow.</td></tr>
-            <tr><td><code>TestSTdLA/Stateful1/workflow.json</code></td><td>Commit</td><td>The workflow definition is deployable source, not local state.</td></tr>
-            <tr><td><code>TestSTdLA/host.json</code>, <code>connections.json</code>, <code>.funcignore</code></td><td>Commit</td><td>They define runtime behavior, connector references, and deployment packaging.</td></tr>
-            <tr><td><code>TestSTdLA/local.settings.json</code></td><td>Do not commit</td><td>This can contain local storage, subscription, resource group, connector, and secret values. Commit <code>local.settings.sample.json</code> instead.</td></tr>
-            <tr><td><code>TestSTdLA/workflow-designtime/local.settings.json</code></td><td>Do not commit</td><td>The designer also needs local app settings, but every developer should create their own copy from a sample.</td></tr>
-            <tr><td><code>TestSTdLA/.debug</code></td><td>Ignore</td><td>Debug state is machine-generated and can break clean clones.</td></tr>
-            <tr><td><code>FnStdLA/FnStdLA.cs</code>, <code>FnStdLA.csproj</code></td><td>Commit</td><td>Custom code source and project files belong in source control.</td></tr>
-            <tr><td><code>FnStdLA/bin</code>, <code>FnStdLA/obj</code></td><td>Ignore</td><td>Build output is restored locally or in CI/CD.</td></tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section class="band">
-        <h2>Transfer to another developer</h2>
-        <div class="grid">
-          <article class="step"><h3>1. Clone and open workspace</h3><p>Clone the repo, then open the repo root or the checked-in <code>.code-workspace</code>. Do not open only <code>Stateful1</code>, <code>Artifacts</code>, or the function project folder.</p></article>
-          <article class="step"><h3>2. Install the same tools</h3><p>Use a committed <code>.vscode/extensions.json</code> to recommend Azure Logic Apps Standard, Azure Functions, C#, and Azurite extensions. Pin team runtime expectations in the README.</p></article>
-          <article class="step"><h3>3. Create local settings</h3><p>Copy <code>local.settings.sample.json</code> into both the project root and <code>workflow-designtime</code> as needed, then fill developer-specific subscription, resource group, storage, and connector values.</p></article>
-          <article class="step"><h3>4. Restore and build code</h3><p>Restore the <code>FnStdLA</code> project and build it locally. Microsoft's custom-code guidance expects code and workflow projects to remain separate folders.</p></article>
-          <article class="step"><h3>5. Rebind cloud connectors</h3><p>Sign in to Azure from VS Code, validate <code>connections.json</code>, and reselect managed API connections if the designer prompts for subscription or resource group context.</p></article>
-          <article class="step"><h3>6. Smoke test the map</h3><p>Open Data Mapper, load the existing map, save once if the extension regenerates XSLT, then run a small local workflow test before pushing changes.</p></article>
+        
+        <div class="callout warning">
+          <strong>Environment Drift:</strong> If you use direct deployment, ensure your team communicates about cloud configuration changes. Without Infrastructure as Code (IaC) or CI/CD, connection strings or settings added via the portal are easily overwritten or forgotten during the next manual deploy.
         </div>
       </section>
 
+      <!-- ═══════════════════════════════════════════════════════
+           TRANSFER CHECKLIST
+           ═══════════════════════════════════════════════════════ -->
+
       <section class="band">
-        <h2>Package vs Git vs deploy</h2>
+        <h2>New developer onboarding checklist</h2>
         <div class="grid">
-          <article class="step"><h3>Best for daily work</h3><p>Use Git. It preserves history, review comments, branches, and the exact set of committed Logic App, Data Mapper, and custom code files.</p></article>
-          <article class="step"><h3>Best for first import</h3><p>Use <strong>Export logic app</strong> or <strong>Create new logic app workspace from package</strong> when the source currently lives in Azure or arrives as a zip package.</p></article>
-          <article class="step"><h3>Best for Azure release</h3><p>Use CI/CD or VS Code <strong>Deploy to logic app</strong> after local files are clean. Replace environment values through app settings, parameters, access policies, and connection scripts.</p></article>
+          <article class="step"><h3>1. Clone and open workspace</h3><p>Clone the repo, then open the <code>.code-workspace</code> file. Do not open <code>Artifacts</code> or a workflow subfolder directly.</p></article>
+          <article class="step"><h3>2. Install recommended extensions</h3><p>VS Code will prompt from <code>.vscode/extensions.json</code>. Accept all recommendations: Logic Apps Standard, Azure Functions, C#, Azurite.</p></article>
+          <article class="step"><h3>3. Create local settings</h3><p>Copy <code>local.settings.sample.json</code> into both the project root and <code>workflow-designtime/</code>. Fill in your Azure subscription, resource group, and storage values.</p></article>
+          <article class="step"><h3>4. Start Azurite</h3><p>Run Azurite for local storage emulation. The runtime needs it when <code>AzureWebJobsStorage</code> is set to <code>UseDevelopmentStorage=true</code>.</p></article>
+          <article class="step"><h3>5. Sign into Azure</h3><p>Sign in via the Azure extension. This restores managed API connector context so the designer renders connections correctly.</p></article>
+          <article class="step"><h3>6. Smoke test the map</h3><p>Open Data Mapper, load an existing map, save once if the extension regenerates XSLT, then run a local workflow test before pushing changes.</p></article>
         </div>
-        <div class="callout">Practical rule: package import is a migration tool; Git is the collaboration tool; CI/CD is the promotion tool.</div>
       </section>
 
       <section class="band">
@@ -154,7 +280,7 @@
       </section>
     </main>
 
-    <footer class="site-footer"><div class="inner">Local setup guidance is based on Logic Apps Standard project and DevOps deployment documentation.</div></footer>
+    <footer class="site-footer"><div class="inner"><span class="footer-logo">⚡ Azure Logic Apps</span> Setup guidance based on Logic Apps Standard project and Microsoft Learn documentation.</div></footer>
     <script src="./app.js"></script>
   </body>
 </html>

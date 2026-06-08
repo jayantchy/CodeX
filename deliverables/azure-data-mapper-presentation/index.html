@@ -3,76 +3,186 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Azure Logic Apps Data Mapper — interactive multi-page guide for XSLT mapping, schemas, CI/CD, and team onboarding." />
     <title>Azure Data Mapper Guide</title>
     <style>
+      @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500&display=swap');
+
+      :root {
+        --azure-blue: #0078D4;
+        --azure-teal: #00B7C3;
+        --azure-navy: #0C1B2E;
+        --azure-purple: #7B61FF;
+      }
+
       body {
         margin: 0;
         min-height: 100vh;
         display: grid;
         place-items: center;
-        font-family: "Aptos", "Segoe UI", sans-serif;
-        color: #0f172a;
-        background:
-          radial-gradient(circle at top left, rgba(0, 120, 212, 0.16), transparent 22rem),
-          radial-gradient(circle at 85% 15%, rgba(183, 121, 31, 0.18), transparent 18rem),
-          linear-gradient(180deg, #f4fbff 0%, #f7fbff 35%, #fdf8f1 100%);
+        font-family: "Inter", "Segoe UI", sans-serif;
+        color: #0C1B2E;
+        background: #F0F4F8;
+        position: relative;
+        overflow: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: -2;
+        background: radial-gradient(circle at 50% 50%, #ffffff 0%, #eef3f9 100%);
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.3;
+        background-image:
+          radial-gradient(circle 1px at 1px 1px, rgba(0, 120, 212, 0.15) 1px, transparent 0);
+        background-size: 32px 32px;
+      }
+
+      @keyframes bg-drift {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.05); }
       }
 
       main {
-        width: min(720px, calc(100% - 32px));
-        padding: 32px;
-        border: 1px solid rgba(15, 23, 42, 0.1);
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.9);
-        box-shadow: 0 20px 44px rgba(15, 23, 42, 0.12);
+        position: relative;
+        z-index: 1;
+        width: min(640px, calc(100% - 32px));
+        padding: 40px;
+        border: 1px solid rgba(0, 120, 212, 0.12);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        box-shadow: 0 20px 60px rgba(0, 60, 107, 0.1), 0 4px 16px rgba(0, 0, 0, 0.04);
+        text-align: center;
+      }
+
+      .azure-stripe {
+        height: 3px;
+        border-radius: 2px;
+        background: linear-gradient(90deg, #0078D4, #00B7C3, #7B61FF, #0078D4);
+        background-size: 300% 100%;
+        animation: stripe-flow 6s linear infinite;
+        margin-bottom: 28px;
+      }
+
+      @keyframes stripe-flow {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 300% 50%; }
+      }
+
+      .brand-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #0078D4, #00B7C3);
+        color: white;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        font-size: 1.3rem;
+        box-shadow: 0 0 24px rgba(0, 120, 212, 0.3);
+        margin-bottom: 20px;
+        position: relative;
+      }
+
+      .brand-icon::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.2));
       }
 
       h1 {
         margin: 0 0 12px;
-        font-size: clamp(2rem, 5vw, 3rem);
-        font-family: "Aptos Display", "Aptos", sans-serif;
+        font-size: clamp(1.8rem, 4vw, 2.8rem);
+        font-family: "Outfit", sans-serif;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        background: linear-gradient(135deg, #0C1B2E 30%, #0078D4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
 
       p {
-        line-height: 1.6;
-        color: #475569;
+        line-height: 1.7;
+        color: #445570;
+        max-width: 50ch;
+        margin: 0 auto;
+      }
+
+      code {
+        display: inline-block;
+        margin-top: 16px;
+        padding: 8px 14px;
+        border-radius: 10px;
+        background: rgba(0, 120, 212, 0.06);
+        border: 1px solid rgba(0, 120, 212, 0.12);
+        color: #0C1B2E;
+        font-family: 'JetBrains Mono', Consolas, monospace;
+        font-size: 0.8rem;
+        word-break: break-all;
       }
 
       .actions {
         display: flex;
         flex-wrap: wrap;
         gap: 12px;
-        margin-top: 20px;
+        margin-top: 24px;
+        justify-content: center;
       }
 
-      a {
+      a.cta {
         display: inline-flex;
-        padding: 12px 18px;
-        border-radius: 8px;
-        background: linear-gradient(90deg, #00a4b4, #0078d4);
+        align-items: center;
+        gap: 6px;
+        padding: 14px 24px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, #0078D4, #00B7C3);
         color: white;
         font-weight: 700;
+        font-family: 'Outfit', sans-serif;
         text-decoration: none;
+        font-size: 0.95rem;
+        box-shadow: 0 0 20px rgba(0, 120, 212, 0.25);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
 
-      code {
-        display: inline-block;
-        margin-top: 12px;
-        padding: 8px 12px;
-        border-radius: 12px;
-        background: rgba(15, 23, 42, 0.06);
-        color: #0f172a;
+      a.cta:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 0 30px rgba(0, 183, 195, 0.4);
+      }
+
+      .footer-text {
+        margin-top: 24px;
+        font-size: 0.75rem;
+        color: #8FA3BF;
       }
     </style>
   </head>
   <body>
     <main>
+      <div class="azure-stripe"></div>
+      <div class="brand-icon">⚡</div>
       <h1>Azure Data Mapper Guide</h1>
-      <p>A polished multi-page guide for Logic Apps Standard Data Mapper: introduction, how it works, setup, sample, issues, learning resources, and quiz.</p>
+      <p>An interactive multi-page guide for Logic Apps Standard Data Mapper: how it works, schemas & XSLT, team setup, CI/CD pipelines, tips & functions, issues, learning resources, and a knowledge quiz.</p>
       <code>https://jayantchy.github.io/CodeX/frontend/index.html</code>
       <div class="actions">
-        <a href="./frontend/index.html">Open the guide</a>
+        <a class="cta" href="./frontend/index.html">Open the guide →</a>
       </div>
+      <p class="footer-text">⚡ Azure Logic Apps — Integration Services</p>
     </main>
   </body>
 </html>

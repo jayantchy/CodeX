@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Test your Azure Data Mapper knowledge — quiz on schemas, XSLT, Git practices, and troubleshooting." />
     <title>Data Mapper Quiz</title>
     <script>
       (function () {
@@ -19,25 +20,29 @@
   <body>
     <header class="site-header">
       <div class="topbar">
-        <a class="brand" href="./index.html"><span class="brand-mark">DM</span><span>Azure Data Mapper</span></a>
+        <a class="brand" href="./index.html"><span class="brand-mark">⚡</span><span>Azure Data Mapper</span></a>
+        <button class="hamburger" type="button" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
         <nav class="nav" aria-label="Primary">
-          <a href="./index.html">Intro</a>
+          <a href="./index.html">Canvas</a>
           <a href="./how.html">How</a>
           <a href="./setup.html">Setup</a>
           <a href="./sample.html">Sample</a>
+          <a href="./xslt.html">XSLT</a>
           <a href="./issues.html">Issues</a>
+          <a href="./tips.html">Tips</a>
           <a href="./learning.html">Learning</a>
           <a href="./quiz.html">Quiz</a>
         </nav>
-        <button class="theme-toggle" type="button" data-theme-toggle>Dark</button>
+        <button class="theme-toggle" type="button" data-theme-toggle>☾ Dark</button>
       </div>
+      <div class="nav-overlay"></div>
     </header>
 
     <main class="page">
       <section class="page-title">
         <span class="kicker">Quiz</span>
         <h1>Check the essentials</h1>
-        <p>Five quick questions. Score: <strong data-score>0/5</strong></p>
+        <p>Seven quick questions. Score: <strong data-score>0/7</strong></p>
         <div class="actions"><button class="button" type="button" data-reset-quiz>Reset quiz</button></div>
       </section>
 
@@ -92,11 +97,31 @@
             </div>
             <p class="quiz-result" hidden>Microsoft Learn calls out Filter string comparison behavior as a current limitation.</p>
           </article>
+
+          <article class="quiz-card" data-question="q6">
+            <h3>Which function is the best workaround for unreliable Filter string comparisons?</h3>
+            <div class="answer-list">
+              <button class="answer-button" data-correct="false">Run XSLT</button>
+              <button class="answer-button" data-correct="true">Execute XPath</button>
+              <button class="answer-button" data-correct="false">Custom XML Function</button>
+            </div>
+            <p class="quiz-result" hidden>Execute XPath lets you write <code>item[name='value']</code> predicates — more reliable than the visual Filter function for string matching.</p>
+          </article>
+
+          <article class="quiz-card" data-question="q7">
+            <h3>Where should custom XSLT files for Run XSLT be placed?</h3>
+            <div class="answer-list">
+              <button class="answer-button" data-correct="false"><code>Artifacts/Maps/</code></button>
+              <button class="answer-button" data-correct="true"><code>Artifacts/DataMapper/Extensions/InlineXSLT/</code></button>
+              <button class="answer-button" data-correct="false"><code>Artifacts/Schemas/</code></button>
+            </div>
+            <p class="quiz-result" hidden>The Data Mapper scans <code>Artifacts/DataMapper/Extensions/InlineXSLT/</code> to populate the Run XSLT function dropdown.</p>
+          </article>
         </div>
       </section>
     </main>
 
-    <footer class="site-footer"><div class="inner">Quiz progress is stored only in your browser.</div></footer>
+    <footer class="site-footer"><div class="inner"><span class="footer-logo">⚡ Azure Logic Apps</span> Quiz progress is stored only in your browser.</div></footer>
     <script src="./app.js"></script>
   </body>
 </html>

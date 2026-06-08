@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Data Mapper tips, tricks, troubleshooting, and function reference — Run XSLT, Execute XPath, Custom XML functions, and xsl:apply-templates." />
+    <title>Data Mapper Tips & Functions</title>
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem("azure-data-mapper-theme-v2");
+          if (theme === "dark" || theme === "light") document.documentElement.dataset.theme = theme;
+          else if (matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.dataset.theme = "dark";
+        } catch (_error) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="topbar">
+        <a class="brand" href="./index.html"><span class="brand-mark">⚡</span><span>Azure Data Mapper</span></a>
+        <button class="hamburger" type="button" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+        <nav class="nav" aria-label="Primary">
+          <a href="./index.html">Canvas</a>
+          <a href="./how.html">How</a>
+          <a href="./setup.html">Setup</a>
+          <a href="./sample.html">Sample</a>
+          <a href="./xslt.html">XSLT</a>
+          <a href="./issues.html">Issues</a>
+          <a href="./tips.html">Tips</a>
+          <a href="./learning.html">Learning</a>
+          <a href="./quiz.html">Quiz</a>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle>☾ Dark</button>
+      </div>
+      <div class="nav-overlay"></div>
+    </header>
+
+    <main class="page">
+      <section class="page-title">
+        <span class="kicker">Tips & Functions</span>
+        <h1>Data Mapper functions, tips & troubleshooting</h1>
+        <p>Master the key extensibility functions, learn practical tips from real projects, and troubleshoot common issues before they cost you hours.</p>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           SECTION 1: DATA MAPPER FUNCTIONS
+           ═══════════════════════════════════════════════════════ -->
+
+      <section class="band">
+        <h2>Core extensibility functions</h2>
+        <p class="lead">Data Mapper provides four key extensibility mechanisms. Each one solves a different problem — knowing which one to reach for saves significant debugging time.</p>
+
+        <div class="grid" style="margin-top: 28px;">
+
+          <!-- Run XSLT -->
+          <article class="function-card">
+            <div class="function-card-header">
+              <div class="function-card-icon xslt">⚙️</div>
+              <div>
+                <h3>Run XSLT</h3>
+                <p>Inject handcrafted XSLT into a visual map</p>
+              </div>
+            </div>
+            <div class="function-card-body">
+              <p>Use <strong>Run XSLT</strong> when the visual designer cannot express the logic cleanly — complex grouping, recursion, legacy BizTalk migration, or advanced conditional branching.</p>
+              <p>Place your XSLT file at:</p>
+              <pre><code>Artifacts/DataMapper/Extensions/InlineXSLT/my-transform.xslt</code></pre>
+              <p>Then in the Data Mapper Functions pane, search for <strong>Run XSLT</strong>, add it to the surface, and select your file from the dropdown. Connect the output to your destination node.</p>
+              <pre><code>&lt;xsl:stylesheet version="3.0"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"&gt;
+
+  &lt;!-- Group items by category and sum quantities --&gt;
+  &lt;xsl:template match="/"&gt;
+    &lt;Summary&gt;
+      &lt;xsl:for-each-group select="//Item"
+        group-by="Category"&gt;
+        &lt;CategoryTotal&gt;
+          &lt;Name&gt;&lt;xsl:value-of select="current-grouping-key()"/&gt;&lt;/Name&gt;
+          &lt;Total&gt;&lt;xsl:value-of select="sum(current-group()/Qty)"/&gt;&lt;/Total&gt;
+        &lt;/CategoryTotal&gt;
+      &lt;/xsl:for-each-group&gt;
+    &lt;/Summary&gt;
+  &lt;/xsl:template&gt;
+
+&lt;/xsl:stylesheet&gt;</code></pre>
+              <div class="when-to-use">
+                <strong>When:</strong> Complex grouping, recursion, legacy map migration, or any logic that would create a tangled visual chain.
+              </div>
+            </div>
+          </article>
+
+          <!-- Execute XPath -->
+          <article class="function-card">
+            <div class="function-card-header">
+              <div class="function-card-icon xpath">🔍</div>
+              <div>
+                <h3>Execute XPath</h3>
+                <p>Extract values with custom XPath 3.1 expressions</p>
+              </div>
+            </div>
+            <div class="function-card-body">
+              <p>Use <strong>Execute XPath</strong> when you need precise value extraction from deeply nested structures, or when the visual Filter function produces unreliable results with string comparisons.</p>
+              <p>In the Functions pane → <strong>Utility</strong> category → <strong>Execute XPath</strong>. Enter your expression in the property box:</p>
+              <pre><code>&lt;!-- Extract the first item's price --&gt;
+/ns0:Order/Items/Item[1]/Price
+
+&lt;!-- Filter items by string value (reliable alternative to Filter) --&gt;
+/ns0:Order/Items/Item[Category='Electronics']/Name
+
+&lt;!-- Sum all quantities where price exceeds threshold --&gt;
+sum(/ns0:Order/Items/Item[Price &gt; 50]/Qty)
+
+&lt;!-- Conditional value with XPath 3.1 --&gt;
+if (//Status = 'Active') then 'APPROVED' else 'PENDING'</code></pre>
+              <div class="when-to-use">
+                <strong>When:</strong> Deep nested extraction, string-based filtering (workaround for Filter function bugs), conditional values, or aggregation.
+              </div>
+            </div>
+          </article>
+
+          <!-- Custom XML Functions -->
+          <article class="function-card">
+            <div class="function-card-header">
+              <div class="function-card-icon xml">📦</div>
+              <div>
+                <h3>Custom XML Functions</h3>
+                <p>Reusable XSLT 3.0 functions in the toolbox</p>
+              </div>
+            </div>
+            <div class="function-card-body">
+              <p>Create reusable transformation logic that appears as a draggable function in the Data Mapper designer. Best for logic you use across multiple maps — date formatting, ID normalization, unit conversion.</p>
+              <p>Place the XML file at:</p>
+              <pre><code>Artifacts/DataMapper/Extensions/Functions/my-functions.xml</code></pre>
+              <p>Example: ISO date formatter and price calculator</p>
+              <pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:dm="http://schemas.microsoft.com/azure/logic-apps/data-mapper"&gt;
+
+  &lt;!-- Format YYYYMMDD → ISO date --&gt;
+  &lt;xsl:function name="dm:iso-date" as="xs:string"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"&gt;
+    &lt;xsl:param name="dateText" as="xs:string" /&gt;
+    &lt;xsl:sequence select="
+      concat(
+        substring($dateText, 1, 4), '-',
+        substring($dateText, 5, 2), '-',
+        substring($dateText, 7, 2)
+      )
+    " /&gt;
+  &lt;/xsl:function&gt;
+
+  &lt;!-- Calculate line total with rounding --&gt;
+  &lt;xsl:function name="dm:line-total" as="xs:decimal"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"&gt;
+    &lt;xsl:param name="qty" as="xs:decimal" /&gt;
+    &lt;xsl:param name="price" as="xs:decimal" /&gt;
+    &lt;xsl:sequence select="round($qty * $price * 100) div 100" /&gt;
+  &lt;/xsl:function&gt;
+
+&lt;/xs:schema&gt;</code></pre>
+              <div class="when-to-use">
+                <strong>When:</strong> Reusable logic across maps — date formatting, ID generation, currency conversion, or any transformation you call more than once.
+              </div>
+            </div>
+          </article>
+
+          <!-- xsl:apply-templates -->
+          <article class="function-card">
+            <div class="function-card-header">
+              <div class="function-card-icon template">🔄</div>
+              <div>
+                <h3>xsl:apply-templates</h3>
+                <p>Template-driven recursive transformation</p>
+              </div>
+            </div>
+            <div class="function-card-body">
+              <p><code>xsl:apply-templates</code> uses pattern matching to process XML sub-trees recursively. Unlike <code>xsl:call-template</code> (which works like a function call), <code>apply-templates</code> matches nodes by pattern and processes them automatically.</p>
+              <p>Logic Apps runs on the <strong>Saxon.NET</strong> XSLT 3.0 engine, so full template matching is supported. Use it via <strong>Run XSLT</strong>:</p>
+              <pre><code>&lt;xsl:stylesheet version="3.0"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"&gt;
+
+  &lt;!-- Entry point: match root and apply to children --&gt;
+  &lt;xsl:template match="/"&gt;
+    &lt;ProcessedOrders&gt;
+      &lt;xsl:apply-templates select="Orders/Order" /&gt;
+    &lt;/ProcessedOrders&gt;
+  &lt;/xsl:template&gt;
+
+  &lt;!-- Transform each Order element --&gt;
+  &lt;xsl:template match="Order"&gt;
+    &lt;ProcessedOrder&gt;
+      &lt;ID&gt;&lt;xsl:value-of select="OrderID" /&gt;&lt;/ID&gt;
+      &lt;Customer&gt;&lt;xsl:value-of select="BuyerName" /&gt;&lt;/Customer&gt;
+      &lt;Status&gt;Processed&lt;/Status&gt;
+      &lt;Items&gt;
+        &lt;xsl:apply-templates select="LineItems/Item" /&gt;
+      &lt;/Items&gt;
+    &lt;/ProcessedOrder&gt;
+  &lt;/xsl:template&gt;
+
+  &lt;!-- Transform each Item within an Order --&gt;
+  &lt;xsl:template match="Item"&gt;
+    &lt;Line&gt;
+      &lt;SKU&gt;&lt;xsl:value-of select="ProductCode" /&gt;&lt;/SKU&gt;
+      &lt;Qty&gt;&lt;xsl:value-of select="Quantity" /&gt;&lt;/Qty&gt;
+      &lt;Total&gt;&lt;xsl:value-of select="Quantity * UnitPrice" /&gt;&lt;/Total&gt;
+    &lt;/Line&gt;
+  &lt;/xsl:template&gt;
+
+&lt;/xsl:stylesheet&gt;</code></pre>
+              <div class="callout">
+                <strong>apply-templates vs call-template:</strong> Use <code>apply-templates</code> when you want the XSLT engine to decide which template to invoke based on the node type. Use <code>call-template</code> when you want to explicitly invoke a named template like a function call.
+              </div>
+              <div class="when-to-use">
+                <strong>When:</strong> Recursive XML processing, polymorphic transforms (different templates for different node types), or processing deeply nested hierarchies where explicit visual mapping becomes unmanageable.
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           SECTION 2: TIPS & TRICKS
+           ═══════════════════════════════════════════════════════ -->
+
+      <section class="band">
+        <h2>Tips & tricks from real projects</h2>
+        <div class="grid">
+          <article class="card">
+            <h3>Use built-in functions first</h3>
+            <p>Data Mapper has 100+ built-in functions (string, math, date, collection). Reach for custom XSLT only after verifying no built-in covers the case. Built-ins integrate with the visual debugger; custom code doesn't.</p>
+          </article>
+          <article class="card">
+            <h3>Enforce strict typing</h3>
+            <p>The mapper may coerce <code>12345</code> to <code>12345.0</code> in JSON output. Use <code>toInteger()</code> or <code>number()</code> to enforce the output type before downstream APIs reject it silently.</p>
+          </article>
+          <article class="card">
+            <h3>Keep schema basenames unique</h3>
+            <p>Don't place <code>Customer.json</code> and <code>Customer.xsd</code> in the same folder. Same-basename collisions can cause the wrong schema to load. Use descriptive prefixes: <code>src_Customer.xsd</code>, <code>tgt_Customer.json</code>.</p>
+          </article>
+          <article class="card">
+            <h3>Save before every test run</h3>
+            <p>The local test panel reads the generated <code>.xslt</code> file. If you changed the visual map but didn't save, tests run against the old XSLT. Always <strong>Ctrl+S</strong> before clicking Test.</p>
+          </article>
+          <article class="card">
+            <h3>Edit the .lml directly for bulk changes</h3>
+            <p>The <code>.lml</code> file is YAML-based. For bulk renames or repetitive connection edits, editing the YAML directly can be faster than the visual surface. Always reopen the map to verify after manual edits.</p>
+          </article>
+          <article class="card">
+            <h3>Store test payloads in source control</h3>
+            <p>Create a <code>tests/mapsamples/</code> folder with representative JSON/XML inputs and expected outputs. This makes regressions visible in PRs, even though the mapper has no native multi-payload test chooser yet.</p>
+          </article>
+          <article class="card">
+            <h3>Use Execute XPath instead of Filter for strings</h3>
+            <p>The visual Filter function has documented bugs with string comparisons (<a href="https://github.com/Azure/LogicAppsUX/issues/6205" target="_blank">#6205</a>). Use <code>Execute XPath</code> with predicates like <code>Item[name='Pen']</code> for reliable filtering.</p>
+          </article>
+          <article class="card">
+            <h3>Modularize complex maps</h3>
+            <p>If a single map canvas becomes crowded and hard to maintain, split the transformation into sequential steps — use multiple smaller maps chained in the workflow rather than one monolithic map.</p>
+          </article>
+          <article class="card">
+            <h3>Review generated XSLT in PRs</h3>
+            <p>Always review both the <code>.lml</code> (design intent) and the <code>.xslt</code> (runtime behavior) together. A visual save can regenerate XSLT in unexpected ways — especially for Filter and repeating elements.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           SECTION 3: TROUBLESHOOTING
+           ═══════════════════════════════════════════════════════ -->
+
+      <section class="band">
+        <h2>Troubleshooting guide</h2>
+        <p class="lead">The most common issues and their fixes, sourced from Microsoft docs, GitHub issues, and community reports.</p>
+
+        <div class="troubleshoot-grid" style="margin-top: 24px;">
+
+          <div class="troubleshoot-item">
+            <div class="troubleshoot-icon">⚠️</div>
+            <div class="troubleshoot-content">
+              <h4>"Undefined" errors when calling a map</h4>
+              <p>Check <code>local.settings.json</code>: set <code>FUNCTIONS_WORKER_RUNTIME</code> to <code>dotnet-isolated</code> and add <code>AzureWebJobsFeatureFlags: EnableMultiLanguageWorker</code>.</p>
+            </div>
+          </div>
+
+          <div class="troubleshoot-item">
+            <div class="troubleshoot-icon">⚠️</div>
+            <div class="troubleshoot-content">
+              <h4>Filter function returns wrong results</h4>
+              <p>String comparisons in Filter are unreliable (<a href="https://github.com/Azure/LogicAppsUX/issues/6205" target="_blank">#6205</a>). Switch to <code>Execute XPath</code> with <code>item[name='value']</code> predicates.</p>
+            </div>
+          </div>
+
+          <div class="troubleshoot-item">
+            <div class="troubleshoot-icon">⚠️</div>
+            <div class="troubleshoot-content">
+              <h4>Number formatting — 12345 becomes 12345.0</h4>
+              <p>JSON numbers can be coerced to floating point. Wrap with <code>toInteger()</code> or use a string cast if the downstream API expects exact integer format.</p>
+            </div>
+          </div>
+
+          <div class="troubleshoot-item">
+            <div class="troubleshoot-icon">⚠️</div>
+            <div class="troubleshoot-content">
+              <h4>Schema fails to load — "$ref" not resolved</h4>
+              <p>JSON schemas using <code>$ref</code> can fail to load (<a href="https://github.com/Azure/LogicAppsUX/issues/6924" target="_blank">#6924</a>). Inline the referenced definitions or flatten the schema until the fix ships.</p>
+            </div>
+          </div>
+
+          <div class="troubleshoot-item">
+            <div class="troubleshoot-icon">⚠️</div>
+            <div class="troubleshoot-content">
+              <h4>"Not a logic app project" on fresh clone</h4>
+              <p>Open the <strong>project root</strong> folder (where <code>host.json</code> lives), not a subfolder. Pin the VS Code extension version (<a href="https://github.com/Azure/LogicAppsUX/issues/7623" target="_blank">#7623</a>).</p>
+            </div>
+          </div>
+
+          <div class="troubleshoot-item">
+            <div class="troubleshoot-icon">⚠️</div>
+            <div class="troubleshoot-content">
+              <h4>Map works in editor but fails in workflow</h4>
+              <p>Verify the input payload matches the schema exactly. Check that you're using <code>Transform using Data Mapper XSLT</code> (not <code>Transform XML</code>). Add a Compose step as a workaround for action-shape quirks.</p>
+            </div>
+          </div>
+
+          <div class="troubleshoot-item">
+            <div class="troubleshoot-icon fix">✓</div>
+            <div class="troubleshoot-content">
+              <h4>XSLT Debugger for local inspection</h4>
+              <p>Install the <strong>XSLT Debugger extension</strong> for VS Code. Set breakpoints, inspect variables, and watch XPath expressions in the generated XSLT — much more powerful than the built-in Test Map panel.</p>
+            </div>
+          </div>
+
+          <div class="troubleshoot-item">
+            <div class="troubleshoot-icon fix">✓</div>
+            <div class="troubleshoot-content">
+              <h4>Use DataMapTestExecutor for CI testing</h4>
+              <p>The Logic Apps Standard testing SDK includes <code>DataMapTestExecutor</code> for automated map validation. Run map tests in your CI pipeline to catch regressions before deployment.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           SECTION 4: QUICK REFERENCE
+           ═══════════════════════════════════════════════════════ -->
+
+      <section class="band">
+        <h2>Function decision matrix</h2>
+        <p class="lead">When the visual mapper can't do what you need, which function should you reach for?</p>
+        <table class="table">
+          <thead>
+            <tr><th>Scenario</th><th>Function</th><th>File location</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Complex grouping, recursion, template matching</td><td><code>Run XSLT</code></td><td><code>Artifacts/DataMapper/Extensions/InlineXSLT/</code></td></tr>
+            <tr><td>Extract nested value, reliable string filter</td><td><code>Execute XPath</code></td><td>Inline — enter expression in property box</td></tr>
+            <tr><td>Reusable logic across maps (date fmt, calc)</td><td><code>Custom XML Function</code></td><td><code>Artifacts/DataMapper/Extensions/Functions/</code></td></tr>
+            <tr><td>Recursive XML processing, polymorphic transform</td><td><code>xsl:apply-templates</code> via Run XSLT</td><td><code>Artifacts/DataMapper/Extensions/InlineXSLT/</code></td></tr>
+            <tr><td>Full legacy BizTalk map migration</td><td><code>Run XSLT</code> with handcrafted XSLT</td><td><code>Artifacts/DataMapper/Extensions/InlineXSLT/</code></td></tr>
+            <tr><td>Simple field rename, concatenation</td><td>Built-in visual functions</td><td>No file — use the drag-and-drop surface</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+    </main>
+
+    <footer class="site-footer"><div class="inner"><span class="footer-logo">⚡ Azure Logic Apps</span> Data Mapper function reference sourced from Microsoft Learn and community integration guides.</div></footer>
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
-    <title>Data Mapper Sample</title>
+    <meta name="description" content="Data Mapper sample mapping with source/target XSD schemas, JSON schemas, .lml map definition, and XSLT output." />
+    <title>Data Mapper Sample & Schemas</title>
     <script>
       (function () {
         try {
@@ -19,26 +20,34 @@
   <body>
     <header class="site-header">
       <div class="topbar">
-        <a class="brand" href="./index.html"><span class="brand-mark">DM</span><span>Azure Data Mapper</span></a>
+        <a class="brand" href="./index.html"><span class="brand-mark">⚡</span><span>Azure Data Mapper</span></a>
+        <button class="hamburger" type="button" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
         <nav class="nav" aria-label="Primary">
-          <a href="./index.html">Intro</a>
+          <a href="./index.html">Canvas</a>
           <a href="./how.html">How</a>
           <a href="./setup.html">Setup</a>
           <a href="./sample.html">Sample</a>
+          <a href="./xslt.html">XSLT</a>
           <a href="./issues.html">Issues</a>
+          <a href="./tips.html">Tips</a>
           <a href="./learning.html">Learning</a>
           <a href="./quiz.html">Quiz</a>
         </nav>
-        <button class="theme-toggle" type="button" data-theme-toggle>Dark</button>
+        <button class="theme-toggle" type="button" data-theme-toggle>☾ Dark</button>
       </div>
+      <div class="nav-overlay"></div>
     </header>
 
     <main class="page">
       <section class="page-title">
         <span class="kicker">Sample</span>
-        <h1>A small order mapping</h1>
-        <p>This example keeps the idea deliberately small: normalize a partner order payload into a canonical order shape, then test the map before adding it to the workflow.</p>
+        <h1>A complete order mapping</h1>
+        <p>This example walks through a full mapping scenario: source and target schemas (XSD &amp; JSON), the <code>.lml</code> map definition, and the generated XSLT — everything you commit to Git.</p>
       </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           PAYLOAD PREVIEW
+           ═══════════════════════════════════════════════════════ -->
 
       <section class="band grid two">
         <article class="card">
@@ -49,7 +58,8 @@
     "orderedOn": "20260608",
     "buyer": { "name": "Contoso Retail" },
     "items": [
-      { "sku": "A-100", "qty": 2, "price": 19.5 }
+      { "sku": "A-100", "qty": 2, "price": 19.5 },
+      { "sku": "B-200", "qty": 1, "price": 45.0 }
     ]
   }
 }</code></pre>
@@ -61,46 +71,346 @@
   "orderDate": "2026-06-08",
   "customerName": "Contoso Retail",
   "lines": [
-    { "itemCode": "A-100", "quantity": 2, "lineTotal": 39 }
-  ]
+    { "itemCode": "A-100", "quantity": 2, "lineTotal": 39.00 },
+    { "itemCode": "B-200", "quantity": 1, "lineTotal": 45.00 }
+  ],
+  "grandTotal": 84.00
 }</code></pre>
         </article>
       </section>
 
-      <section class="band split">
-        <div>
-          <h2>Mapping notes</h2>
-          <div class="grid">
-            <article class="card"><h3>Direct copy</h3><p><code>id</code> becomes <code>orderId</code>, and <code>buyer.name</code> becomes <code>customerName</code>.</p></article>
-            <article class="card"><h3>Date normalization</h3><p>Format <code>YYYYMMDD</code> into an ISO-style date string before downstream systems consume it.</p></article>
-            <article class="card"><h3>Repeating lines</h3><p>Map parent arrays and child item fields explicitly so loops are visible and testable.</p></article>
+      <!-- ═══════════════════════════════════════════════════════
+           SCHEMAS — TABBED VIEW
+           ═══════════════════════════════════════════════════════ -->
+
+      <section class="band">
+        <h2>Source schema</h2>
+        <p class="lead">The source schema defines the partner order format. Data Mapper supports both JSON Schema and XSD. Below are both representations of the same source.</p>
+
+        <div class="schema-container">
+          <div class="schema-tabs">
+            <button class="schema-tab active" data-tab="src-json">JSON Schema</button>
+            <button class="schema-tab" data-tab="src-xsd">XSD</button>
+          </div>
+          <div class="schema-panel active" data-panel="src-json">
+            <pre><code>{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PartnerOrder",
+  "description": "Source schema — partner order payload",
+  "type": "object",
+  "properties": {
+    "partnerOrder": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Partner order identifier"
+        },
+        "orderedOn": {
+          "type": "string",
+          "pattern": "^[0-9]{8}$",
+          "description": "Date in YYYYMMDD format"
+        },
+        "buyer": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" }
+          },
+          "required": ["name"]
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sku": { "type": "string" },
+              "qty": { "type": "integer", "minimum": 1 },
+              "price": { "type": "number", "minimum": 0 }
+            },
+            "required": ["sku", "qty", "price"]
+          }
+        }
+      },
+      "required": ["id", "orderedOn", "buyer", "items"]
+    }
+  },
+  "required": ["partnerOrder"]
+}</code></pre>
+          </div>
+          <div class="schema-panel" data-panel="src-xsd">
+            <pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://contoso.com/schemas/partnerorder"
+           xmlns:po="http://contoso.com/schemas/partnerorder"
+           elementFormDefault="qualified"&gt;
+
+  &lt;xs:element name="PartnerOrder"&gt;
+    &lt;xs:complexType&gt;
+      &lt;xs:sequence&gt;
+        &lt;xs:element name="Id" type="xs:string" /&gt;
+        &lt;xs:element name="OrderedOn" type="xs:string"&gt;
+          &lt;xs:annotation&gt;
+            &lt;xs:documentation&gt;YYYYMMDD format&lt;/xs:documentation&gt;
+          &lt;/xs:annotation&gt;
+        &lt;/xs:element&gt;
+        &lt;xs:element name="Buyer"&gt;
+          &lt;xs:complexType&gt;
+            &lt;xs:sequence&gt;
+              &lt;xs:element name="Name" type="xs:string" /&gt;
+            &lt;/xs:sequence&gt;
+          &lt;/xs:complexType&gt;
+        &lt;/xs:element&gt;
+        &lt;xs:element name="Items"&gt;
+          &lt;xs:complexType&gt;
+            &lt;xs:sequence&gt;
+              &lt;xs:element name="Item" maxOccurs="unbounded"&gt;
+                &lt;xs:complexType&gt;
+                  &lt;xs:sequence&gt;
+                    &lt;xs:element name="SKU" type="xs:string" /&gt;
+                    &lt;xs:element name="Qty" type="xs:integer" /&gt;
+                    &lt;xs:element name="Price" type="xs:decimal" /&gt;
+                  &lt;/xs:sequence&gt;
+                &lt;/xs:complexType&gt;
+              &lt;/xs:element&gt;
+            &lt;/xs:sequence&gt;
+          &lt;/xs:complexType&gt;
+        &lt;/xs:element&gt;
+      &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+  &lt;/xs:element&gt;
+
+&lt;/xs:schema&gt;</code></pre>
           </div>
         </div>
-        <figure class="visual-panel">
-          <img src="https://learn.microsoft.com/azure/logic-apps/media/create-maps-data-transformation-visual-studio-code/run-xslt.png" alt="Data Mapper Run XSLT function selected in the mapping surface" />
-          <figcaption class="caption">Inline XSLT is useful when a visual function chain would become harder to maintain than a small transform.</figcaption>
-        </figure>
       </section>
 
-      <section class="band split">
-        <div>
-          <h2>XSLT 3.0 style helper</h2>
-          <p class="lead">Data Mapper supports XSLT artifacts and custom XML functions that follow an XSLT 3.0 style. Use this for transformations that benefit from reusable logic.</p>
+      <section class="band">
+        <h2>Target schema</h2>
+        <p class="lead">The target schema defines the canonical order format that downstream systems consume.</p>
+
+        <div class="schema-container">
+          <div class="schema-tabs">
+            <button class="schema-tab active" data-tab="tgt-json">JSON Schema</button>
+            <button class="schema-tab" data-tab="tgt-xsd">XSD</button>
+          </div>
+          <div class="schema-panel active" data-panel="tgt-json">
+            <pre><code>{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CanonicalOrder",
+  "description": "Target schema — normalized internal order",
+  "type": "object",
+  "properties": {
+    "orderId": { "type": "string" },
+    "orderDate": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO 8601 date"
+    },
+    "customerName": { "type": "string" },
+    "lines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "itemCode": { "type": "string" },
+          "quantity": { "type": "integer" },
+          "lineTotal": { "type": "number" }
+        },
+        "required": ["itemCode", "quantity", "lineTotal"]
+      }
+    },
+    "grandTotal": { "type": "number" }
+  },
+  "required": ["orderId", "orderDate", "customerName", "lines", "grandTotal"]
+}</code></pre>
+          </div>
+          <div class="schema-panel" data-panel="tgt-xsd">
+            <pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://contoso.com/schemas/canonicalorder"
+           xmlns:co="http://contoso.com/schemas/canonicalorder"
+           elementFormDefault="qualified"&gt;
+
+  &lt;xs:element name="CanonicalOrder"&gt;
+    &lt;xs:complexType&gt;
+      &lt;xs:sequence&gt;
+        &lt;xs:element name="OrderId" type="xs:string" /&gt;
+        &lt;xs:element name="OrderDate" type="xs:date" /&gt;
+        &lt;xs:element name="CustomerName" type="xs:string" /&gt;
+        &lt;xs:element name="Lines"&gt;
+          &lt;xs:complexType&gt;
+            &lt;xs:sequence&gt;
+              &lt;xs:element name="Line" maxOccurs="unbounded"&gt;
+                &lt;xs:complexType&gt;
+                  &lt;xs:sequence&gt;
+                    &lt;xs:element name="ItemCode" type="xs:string" /&gt;
+                    &lt;xs:element name="Quantity" type="xs:integer" /&gt;
+                    &lt;xs:element name="LineTotal" type="xs:decimal" /&gt;
+                  &lt;/xs:sequence&gt;
+                &lt;/xs:complexType&gt;
+              &lt;/xs:element&gt;
+            &lt;/xs:sequence&gt;
+          &lt;/xs:complexType&gt;
+        &lt;/xs:element&gt;
+        &lt;xs:element name="GrandTotal" type="xs:decimal" /&gt;
+      &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+  &lt;/xs:element&gt;
+
+&lt;/xs:schema&gt;</code></pre>
+          </div>
         </div>
-        <pre><code>&lt;xsl:function name="dm:iso-date" as="xs:string"&gt;
-  &lt;xsl:param name="dateText" as="xs:string" /&gt;
-  &lt;xsl:sequence select="
-    concat(
-      substring($dateText, 1, 4), '-',
-      substring($dateText, 5, 2), '-',
-      substring($dateText, 7, 2)
-    )
-  " /&gt;
-&lt;/xsl:function&gt;</code></pre>
       </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           .LML MAP DEFINITION
+           ═══════════════════════════════════════════════════════ -->
+
+      <section class="band">
+        <h2>Map definition — the .lml file</h2>
+        <p class="lead">The <code>.lml</code> file is the YAML-based design source that the Data Mapper visual editor reads and writes. It tracks schema references, connections, and function nodes. This is what you commit as the "authoring source" — the generated <code>.xslt</code> is the "runtime artifact".</p>
+        <div class="callout">
+          <strong>File location:</strong> <code>Artifacts/MapDefinitions/OrderMapping.lml</code>
+        </div>
+        <pre><code># Azure Logic Apps Data Mapper — Map Definition
+# This YAML is managed by the visual designer.
+# Manual edits are possible but should be verified by reopening the map.
+
+$version: 1
+$input: Artifacts/Schemas/src_PartnerOrder.json
+$output: Artifacts/Schemas/tgt_CanonicalOrder.json
+$sourceSchema: src_PartnerOrder
+$targetSchema: tgt_CanonicalOrder
+
+# Direct mappings
+/root/partnerOrder/id = /root/orderId
+
+# Function: date normalization via custom function
+/root/partnerOrder/orderedOn = dm:iso-date(/root/partnerOrder/orderedOn)
+dm:iso-date(/root/partnerOrder/orderedOn) = /root/orderDate
+
+# Nested property mapping
+/root/partnerOrder/buyer/name = /root/customerName
+
+# Repeating element mapping (auto-creates a loop)
+/root/partnerOrder/items/* = /root/lines/*
+
+# Child item mappings within the loop
+/root/partnerOrder/items/*/sku = /root/lines/*/itemCode
+/root/partnerOrder/items/*/qty = /root/lines/*/quantity
+
+# Calculated field: qty × price
+dm:line-total(/root/partnerOrder/items/*/qty, /root/partnerOrder/items/*/price) = /root/lines/*/lineTotal
+
+# Aggregation: sum of all line totals
+sum(/root/lines/*/lineTotal) = /root/grandTotal</code></pre>
+        <div class="callout warning">
+          <strong>Important:</strong> The <code>.lml</code> format is managed by the Data Mapper extension. The exact syntax may evolve between extension versions. Treat this as a reference representation — the canonical format is whatever the current extension generates.
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           GENERATED XSLT
+           ═══════════════════════════════════════════════════════ -->
+
+      <section class="band">
+        <h2>Generated XSLT — the runtime artifact</h2>
+        <p class="lead">When you save the map, Data Mapper compiles the <code>.lml</code> into this XSLT 3.0 file. This is what the workflow actually executes at runtime.</p>
+        <div class="callout">
+          <strong>File location:</strong> <code>Artifacts/Maps/OrderMapping.xslt</code>
+        </div>
+        <pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;xsl:stylesheet version="3.0"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:dm="http://schemas.microsoft.com/azure/logic-apps/data-mapper"&gt;
+
+  &lt;xsl:output method="xml" indent="yes" /&gt;
+
+  &lt;!-- Custom function: ISO date formatting --&gt;
+  &lt;xsl:function name="dm:iso-date" as="xs:string"&gt;
+    &lt;xsl:param name="dateText" as="xs:string" /&gt;
+    &lt;xsl:sequence select="
+      concat(
+        substring($dateText, 1, 4), '-',
+        substring($dateText, 5, 2), '-',
+        substring($dateText, 7, 2)
+      )
+    " /&gt;
+  &lt;/xsl:function&gt;
+
+  &lt;!-- Custom function: line total calculation --&gt;
+  &lt;xsl:function name="dm:line-total" as="xs:decimal"&gt;
+    &lt;xsl:param name="qty" as="xs:decimal" /&gt;
+    &lt;xsl:param name="price" as="xs:decimal" /&gt;
+    &lt;xsl:sequence select="round($qty * $price * 100) div 100" /&gt;
+  &lt;/xsl:function&gt;
+
+  &lt;xsl:template match="/"&gt;
+    &lt;CanonicalOrder&gt;
+      &lt;OrderId&gt;
+        &lt;xsl:value-of select="/PartnerOrder/Id" /&gt;
+      &lt;/OrderId&gt;
+      &lt;OrderDate&gt;
+        &lt;xsl:value-of select="dm:iso-date(/PartnerOrder/OrderedOn)" /&gt;
+      &lt;/OrderDate&gt;
+      &lt;CustomerName&gt;
+        &lt;xsl:value-of select="/PartnerOrder/Buyer/Name" /&gt;
+      &lt;/CustomerName&gt;
+      &lt;Lines&gt;
+        &lt;xsl:for-each select="/PartnerOrder/Items/Item"&gt;
+          &lt;Line&gt;
+            &lt;ItemCode&gt;&lt;xsl:value-of select="SKU" /&gt;&lt;/ItemCode&gt;
+            &lt;Quantity&gt;&lt;xsl:value-of select="Qty" /&gt;&lt;/Quantity&gt;
+            &lt;LineTotal&gt;
+              &lt;xsl:value-of select="dm:line-total(Qty, Price)" /&gt;
+            &lt;/LineTotal&gt;
+          &lt;/Line&gt;
+        &lt;/xsl:for-each&gt;
+      &lt;/Lines&gt;
+      &lt;GrandTotal&gt;
+        &lt;xsl:value-of select="
+          sum(for $item in /PartnerOrder/Items/Item
+            return dm:line-total($item/Qty, $item/Price))" /&gt;
+      &lt;/GrandTotal&gt;
+    &lt;/CanonicalOrder&gt;
+  &lt;/xsl:template&gt;
+
+&lt;/xsl:stylesheet&gt;</code></pre>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           MAPPING NOTES
+           ═══════════════════════════════════════════════════════ -->
+
+      <section class="band">
+        <h2>Mapping notes</h2>
+        <div class="grid">
+          <article class="card"><h3>Direct copy</h3><p><code>id</code> becomes <code>orderId</code>, and <code>buyer.name</code> becomes <code>customerName</code>. Simple one-to-one mappings.</p></article>
+          <article class="card"><h3>Date normalization</h3><p>Uses the custom <code>dm:iso-date()</code> function to format <code>YYYYMMDD</code> into ISO-style <code>YYYY-MM-DD</code> before downstream systems consume it.</p></article>
+          <article class="card"><h3>Repeating lines</h3><p>Map parent arrays explicitly. The loop is visible in the <code>.lml</code> and compiles to <code>xsl:for-each</code> in the generated XSLT.</p></article>
+          <article class="card"><h3>Calculated fields</h3><p><code>dm:line-total(qty, price)</code> computes each line amount with rounding. <code>grandTotal</code> is a sum aggregation across all lines.</p></article>
+        </div>
+      </section>
+
+      <section class="band">
+        <h2>What to commit from this sample</h2>
+        <table class="table">
+          <thead><tr><th>File</th><th>Path</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td>Source schema</td><td><code>Artifacts/Schemas/src_PartnerOrder.json</code></td><td>Partner order shape for the mapper</td></tr>
+            <tr><td>Target schema</td><td><code>Artifacts/Schemas/tgt_CanonicalOrder.json</code></td><td>Canonical order shape for downstream</td></tr>
+            <tr><td>Map definition</td><td><code>Artifacts/MapDefinitions/OrderMapping.lml</code></td><td>Visual authoring source (YAML)</td></tr>
+            <tr><td>Generated XSLT</td><td><code>Artifacts/Maps/OrderMapping.xslt</code></td><td>Runtime transform executed by workflow</td></tr>
+            <tr><td>Custom functions</td><td><code>Artifacts/DataMapper/Extensions/Functions/</code></td><td>Reusable XSLT 3.0 functions</td></tr>
+            <tr><td>Test payloads</td><td><code>tests/mapsamples/order-input.json</code></td><td>Representative test data for CI</td></tr>
+          </tbody>
+        </table>
+      </section>
+
     </main>
 
-    <footer class="site-footer"><div class="inner">Save before local testing so the generated XSLT reflects the current map design.</div></footer>
+    <footer class="site-footer"><div class="inner"><span class="footer-logo">⚡ Azure Logic Apps</span> Save the map before local testing so the generated XSLT reflects the current design.</div></footer>
     <script src="./app.js"></script>
   </body>
 </html>
