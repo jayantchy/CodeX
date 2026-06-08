@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Data Mapper Learning</title>
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem("azure-data-mapper-theme-v2");
+          if (theme === "dark" || theme === "light") document.documentElement.dataset.theme = theme;
+          else if (matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.dataset.theme = "dark";
+        } catch (_error) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="topbar">
+        <a class="brand" href="./index.html"><span class="brand-mark">DM</span><span>Azure Data Mapper</span></a>
+        <nav class="nav" aria-label="Primary">
+          <a href="./index.html">Intro</a>
+          <a href="./how.html">How</a>
+          <a href="./setup.html">Setup</a>
+          <a href="./sample.html">Sample</a>
+          <a href="./issues.html">Issues</a>
+          <a href="./learning.html">Learning</a>
+          <a href="./quiz.html">Quiz</a>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle>Dark</button>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="page-title">
+        <span class="kicker">Learning</span>
+        <h1>Resources worth bookmarking</h1>
+        <p>This page keeps the useful links in HTML, grouped by what you are trying to learn: Data Mapper, XSLT 3.0, team deployment, and integration blog updates.</p>
+      </section>
+
+      <section class="band">
+        <h2>Microsoft Learn essentials</h2>
+        <div class="grid two">
+          <article class="resource"><h3><a href="https://learn.microsoft.com/azure/logic-apps/create-maps-data-transformation-visual-studio-code" target="_blank" rel="noreferrer">Create maps with Visual Studio Code</a></h3><p>The main Data Mapper authoring guide: schemas, map creation, testing, saving, artifacts, custom functions, Run XSLT, and limitations.</p></article>
+          <article class="resource"><h3><a href="https://learn.microsoft.com/azure/logic-apps/logic-apps-enterprise-integration-maps" target="_blank" rel="noreferrer">Add maps for transform operations</a></h3><p>Map type support for Standard and Consumption workflows, including XSLT, XSLT 2.0, and XSLT 3.0.</p></article>
+          <article class="resource"><h3><a href="https://learn.microsoft.com/azure/logic-apps/logic-apps-enterprise-integration-transform" target="_blank" rel="noreferrer">Transform XML in workflows</a></h3><p>Useful when you are comparing Data Mapper operations with the classic XML Operations transform path.</p></article>
+          <article class="resource"><h3><a href="https://learn.microsoft.com/azure/logic-apps/devops-deployment-single-tenant-azure-logic-apps" target="_blank" rel="noreferrer">Standard Logic Apps DevOps deployment</a></h3><p>Project files, local settings, connections, host settings, and deployment packaging guidance for Standard workflows.</p></article>
+        </div>
+      </section>
+
+      <section class="band split">
+        <div>
+          <h2>XSLT 3.0 learning path</h2>
+          <p class="lead">For Data Mapper work, learn enough XSLT to read generated transforms, understand XPath selectors, and recognize when inline XSLT is cleaner than a visual chain.</p>
+        </div>
+        <div class="grid">
+          <article class="resource"><h3><a href="https://www.w3.org/TR/xslt-30/" target="_blank" rel="noreferrer">W3C XSLT 3.0 Recommendation</a></h3><p>The formal language reference. Use it for exact semantics.</p></article>
+          <article class="resource"><h3><a href="https://www.w3.org/Style/Xsl" target="_blank" rel="noreferrer">W3C XSL family</a></h3><p>Context for XSLT, XPath, XDM, and related XML standards.</p></article>
+          <article class="resource"><h3><a href="https://www.saxonica.com/html/documentation10/using-xsl/xslt30.html" target="_blank" rel="noreferrer">Saxon XSLT 3.0 notes</a></h3><p>A practical implementation-oriented view of XSLT 3.0 features.</p></article>
+        </div>
+      </section>
+
+      <section class="band">
+        <h2>Integration and Data Mapper blogs</h2>
+        <div class="grid two">
+          <article class="resource"><h3><a href="https://techcommunity.microsoft.com/blog/integrationsonazureblog/announcement-azure-logic-apps-new-data-mapper-for-visual-studio-code-preview/3777138" target="_blank" rel="noreferrer">Announcement: new Data Mapper for VS Code</a></h3><p>Microsoft's April 2023 preview announcement and original positioning.</p></article>
+          <article class="resource"><h3><a href="https://techcommunity.microsoft.com/t5/azure-integration-services-blog/data-mapper-for-azure-logic-apps-standard-reaches-general/ba-p/3982731" target="_blank" rel="noreferrer">Data Mapper reaches GA</a></h3><p>November 2023 GA notes: transformation types, functions, extensibility, testing, and merged extension guidance.</p></article>
+          <article class="resource"><h3><a href="https://techcommunity.microsoft.com/blog/integrationsonazureblog/-new--improved-data-mapper-ux-in-azure-logic-apps-%E2%80%93-now-in-public-preview/4377088" target="_blank" rel="noreferrer">New and improved Data Mapper UX</a></h3><p>February 2025 preview refresh with navigation, functions panel, loop handling, validation, and testing improvements.</p></article>
+          <article class="resource"><h3><a href="https://techcommunity.microsoft.com/blog/integrationsonazureblog/-public-preview-refresh-more-power-to-data-mapper-in-azure-logic-apps/4396813" target="_blank" rel="noreferrer">More power to Data Mapper</a></h3><p>March 2025 refresh focused on Run XSLT support in the newer UX.</p></article>
+          <article class="resource"><h3><a href="https://techcommunity.microsoft.com/blog/integrationsonazureblog/data-mapper-test-executor-a-new-addition-to-logic-apps-standard-test-framework/4472440" target="_blank" rel="noreferrer">Data Mapper Test Executor</a></h3><p>Testing-focused article for map validation in the Logic Apps Standard automated test framework.</p></article>
+          <article class="resource"><h3><a href="https://blog.sandro-pereira.com/2023/07/19/logic-apps-standard-data-mapper-basic-principles-of-maps/" target="_blank" rel="noreferrer">Basic principles of maps</a></h3><p>Community explanation of map concepts and the relationship between visual maps and XSLT artifacts.</p></article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><div class="inner">Learning links were refreshed through Microsoft Learn, Microsoft Tech Community, W3C, Saxonica, and community integration blogs.</div></footer>
+    <script src="./app.js"></script>
+  </body>
+</html>

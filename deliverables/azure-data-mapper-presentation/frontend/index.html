@@ -4,388 +4,91 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
-    <title>Azure Data Mapper Research Explorer</title>
+    <title>Azure Data Mapper Guide</title>
     <script>
       (function () {
         try {
-          var key = "azure-data-mapper-theme-v1";
-          var storedTheme = localStorage.getItem(key);
-          if (storedTheme === "light" || storedTheme === "dark") {
-            document.documentElement.dataset.theme = storedTheme;
-            return;
-          }
-          if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-            document.documentElement.dataset.theme = "dark";
-          }
-        } catch (_error) {
-          // Keep the default light palette if local storage is unavailable.
-        }
+          var theme = localStorage.getItem("azure-data-mapper-theme-v2");
+          if (theme === "dark" || theme === "light") document.documentElement.dataset.theme = theme;
+          else if (matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.dataset.theme = "dark";
+        } catch (_error) {}
       })();
     </script>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="page-shell">
-      <div class="utility-bar reveal">
-        <div class="utility-chip">
-          <span class="utility-kicker">Published handbook</span>
-          <strong>Gamified Azure Data Mapper explorer</strong>
-        </div>
-        <button class="theme-toggle" id="theme-toggle" type="button" aria-live="polite">
-          <span class="theme-toggle-icon" id="theme-toggle-icon" aria-hidden="true">SUN</span>
-          <span class="theme-toggle-copy">
-            <span class="theme-toggle-label">Theme</span>
-            <strong id="theme-toggle-value">Light mode</strong>
-          </span>
-        </button>
+    <header class="site-header">
+      <div class="topbar">
+        <a class="brand" href="./index.html"><span class="brand-mark">DM</span><span>Azure Data Mapper</span></a>
+        <nav class="nav" aria-label="Primary">
+          <a href="./index.html">Intro</a>
+          <a href="./how.html">How</a>
+          <a href="./setup.html">Setup</a>
+          <a href="./sample.html">Sample</a>
+          <a href="./issues.html">Issues</a>
+          <a href="./learning.html">Learning</a>
+          <a href="./quiz.html">Quiz</a>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle>Dark</button>
       </div>
+    </header>
 
-      <header class="hero" id="top">
-        <div class="hero-copy reveal">
-          <span class="eyebrow">Azure Logic Apps Standard</span>
-          <h1>Azure Data Mapper Research Explorer</h1>
+    <main class="page">
+      <section class="hero">
+        <div class="hero-copy">
+          <span class="kicker">Logic Apps Standard</span>
+          <h1>Data mapping without the wall of text</h1>
           <p>
-            A browser-friendly view of the detailed Markdown research: use cases, XSLT 3.0, XSLT 1.0 and CDATA,
-            public open issues, and the Git-first setup that keeps Logic Apps Standard projects in sync across developer machines.
+            A focused guide to Azure Logic Apps Data Mapper: what it is, how the generated XSLT fits into a workflow,
+            how to set up a team project, what to test locally, and where the current product rough edges are.
           </p>
           <div class="hero-actions">
-            <a class="button primary" href="../azure-data-mapper-detailed-presentation.pptx">Open detailed PPT</a>
-            <a class="button secondary" href="../open-issues-and-git-setup-notes.md">Open research Markdown</a>
-            <a class="button tertiary" href="../PUBLISHING.md">Publishing guide</a>
+            <a class="button primary" href="./how.html">Start with how it works</a>
+            <a class="button" href="./sample.html">See a sample map</a>
           </div>
         </div>
-        <div class="hero-metrics reveal">
-          <article class="metric-card azure">
-            <strong>.lml + .xslt</strong>
-            <span>Dual artifacts to govern</span>
+        <figure class="visual-panel">
+          <img src="https://learn.microsoft.com/azure/logic-apps/media/create-maps-data-transformation-visual-studio-code/create-data-map.png" alt="Visual Studio Code Azure pane showing Create data map for Logic Apps Data Mapper" />
+          <figcaption class="caption">Data Mapper starts inside a Standard logic app project in Visual Studio Code.</figcaption>
+        </figure>
+      </section>
+
+      <section class="band">
+        <h2>What to remember first</h2>
+        <div class="grid">
+          <article class="card">
+            <h3>It is Standard-only authoring</h3>
+            <p>Microsoft documents Data Mapper authoring in Visual Studio Code inside Azure Logic Apps Standard projects.</p>
           </article>
-          <article class="metric-card cyan">
-            <strong>XSLT 3.0</strong>
-            <span>Documented map type support</span>
+          <article class="card">
+            <h3>Two files matter</h3>
+            <p>The visual map is saved as <code>.lml</code> and the executable transform is generated as <code>.xslt</code>.</p>
           </article>
-          <article class="metric-card coral">
-            <strong>June 2026</strong>
-            <span>Fresh extension instability cluster</span>
-          </article>
-          <article class="metric-card gold">
-            <strong>Git + CI/CD</strong>
-            <span>Works when versions are pinned</span>
+          <article class="card">
+            <h3>The action is specific</h3>
+            <p>Maps created with Data Mapper are called with <code>Transform using Data Mapper XSLT</code>, not the older Transform XML action.</p>
           </article>
         </div>
-      </header>
+      </section>
 
-      <nav class="section-nav">
-        <a href="#mission">Mission</a>
-        <a href="#overview">Overview</a>
-        <a href="#xslt">XSLT</a>
-        <a href="#issues">Issue Radar</a>
-        <a href="#team">Team Setup</a>
-        <a href="#sources">Sources</a>
-      </nav>
+      <section class="band split">
+        <div>
+          <h2>Recommended path</h2>
+          <p class="lead">Use this site as a short walkthrough rather than a reference dump. The pages follow the sequence a team usually needs.</p>
+        </div>
+        <div class="flow">
+          <span>Introduction</span>
+          <span>How it works</span>
+          <span>Team setup</span>
+          <span>Sample map</span>
+          <span>Issues and quiz</span>
+        </div>
+      </section>
+    </main>
 
-      <main>
-        <section class="panel reveal" id="mission">
-          <div class="section-heading">
-            <span class="section-tag">00</span>
-            <div>
-              <h2>Mission Control</h2>
-              <p>Turn the research into a lightweight playthrough: explore sections, inspect issue cards, answer quiz prompts, and unlock badges.</p>
-            </div>
-          </div>
-
-          <div class="mission-layout">
-            <article class="scoreboard-card">
-              <div class="score-grid">
-                <div class="score-stat">
-                  <span>Level</span>
-                  <strong id="player-level">Map Scout</strong>
-                </div>
-                <div class="score-stat">
-                  <span>XP</span>
-                  <strong id="player-xp">0</strong>
-                </div>
-                <div class="score-stat">
-                  <span>Sections</span>
-                  <strong id="player-sections">0/6</strong>
-                </div>
-              </div>
-
-              <div class="progress-shell" aria-hidden="true">
-                <div class="progress-fill" id="xp-progress-bar"></div>
-              </div>
-              <p class="score-caption" id="level-caption">Visit sections, inspect issues, and clear the quiz to climb from Map Scout to Release Captain.</p>
-
-              <div class="badge-rack" id="badge-row"></div>
-
-              <button class="button tertiary small" id="reset-progress" type="button">Reset progress</button>
-            </article>
-
-            <article class="mission-board">
-              <h3>Mission board</h3>
-              <div class="mission-cards" id="mission-cards"></div>
-            </article>
-          </div>
-
-          <div class="card-grid two-up mission-lab">
-            <article class="info-card accent-cyan">
-              <h3>Challenge Lab</h3>
-              <p class="mission-copy">Quick checks that turn the research into memory. Correct answers award more XP, but every attempt teaches something.</p>
-              <div class="quiz-stack" id="quiz-stack"></div>
-            </article>
-
-            <article class="info-card accent-green">
-              <h3>Go Live options</h3>
-              <ul>
-                <li><strong>GitHub Pages:</strong> the easiest path for this static deliverable. I prepared a Pages workflow and a root landing page for it.</li>
-                <li><strong>Azure Static Web Apps:</strong> best Azure-native option when you want GitHub or Azure DevOps integration, global static distribution, and free SSL.</li>
-              </ul>
-              <p class="mission-copy">The current setup is publish-ready for GitHub Pages now, and I can wire Azure Static Web Apps next if you want the Azure route.</p>
-            </article>
-          </div>
-        </section>
-
-        <section class="panel reveal" id="overview">
-          <div class="section-heading">
-            <span class="section-tag">01</span>
-            <div>
-              <h2>What the feature really is</h2>
-              <p>Data Mapper is a project-scoped authoring pipeline inside Logic Apps Standard, not just a visual canvas.</p>
-            </div>
-          </div>
-
-          <div class="flow-map">
-            <div class="flow-node source">Schemas</div>
-            <div class="flow-arrow"></div>
-            <div class="flow-node design">Visual map (.lml)</div>
-            <div class="flow-arrow"></div>
-            <div class="flow-node runtime">Generated .xslt</div>
-            <div class="flow-arrow"></div>
-            <div class="flow-node action">Workflow action</div>
-          </div>
-
-          <div class="card-grid four-up">
-            <article class="info-card">
-              <h3>Best-fit use cases</h3>
-              <p>B2B orders, invoices, canonical-model transforms, partner payload reshaping, and workflow-local schema-driven mappings.</p>
-            </article>
-            <article class="info-card">
-              <h3>Authoring model</h3>
-              <p>Microsoft documents VS Code authoring with saved output in <code>Artifacts/MapDefinitions</code> and <code>Artifacts/Maps</code>.</p>
-            </article>
-            <article class="info-card">
-              <h3>Key tradeoff</h3>
-              <p>The visual source and runtime source are separate artifacts, so teams must review both and treat mapper saves carefully.</p>
-            </article>
-            <article class="info-card">
-              <h3>Operational limit</h3>
-              <p>Current mapper authoring is Standard-only and Windows-only, which matters immediately for team rollout planning.</p>
-            </article>
-          </div>
-        </section>
-
-        <section class="panel reveal" id="xslt">
-          <div class="section-heading">
-            <span class="section-tag">02</span>
-            <div>
-              <h2>XSLT 3.0, XSLT 1.0, and CDATA</h2>
-              <p>The docs, the standard, and the public issue stream point to coexistence, not a full replacement story.</p>
-            </div>
-          </div>
-
-          <div class="card-grid two-up">
-            <article class="info-card accent-azure">
-              <h3>XSLT 3.0 in Logic Apps</h3>
-              <ul>
-                <li>Microsoft documents map type support for XSLT, XSLT 2.0, and XSLT 3.0.</li>
-                <li>Custom XML functions are documented in XSLT 3.0 style.</li>
-                <li>Advanced logic can live in project-scoped extension folders.</li>
-              </ul>
-            </article>
-            <article class="info-card accent-gold">
-              <h3>Compatibility with XSLT 1.0</h3>
-              <ul>
-                <li>Legacy XSLT maps still fit Logic Apps through <code>Transform XML</code>.</li>
-                <li>Data Mapper adds a different action path and a new <code>.lml</code> authoring artifact.</li>
-                <li>The safest modernization pattern is coexistence, not blanket migration.</li>
-              </ul>
-            </article>
-          </div>
-
-          <div class="accordion-stack" id="cdata-accordion"></div>
-        </section>
-
-        <section class="panel reveal" id="issues">
-          <div class="section-heading">
-            <span class="section-tag">03</span>
-            <div>
-              <h2>Issue radar</h2>
-              <p>Filter by category or search a symptom to see the public issue clusters that matter most for local testing and team rollout.</p>
-            </div>
-          </div>
-
-          <div class="issue-toolbar">
-            <div class="chip-row" id="category-chips"></div>
-            <label class="search-box">
-              <span>Search</span>
-              <input id="issue-search" type="search" placeholder="Filter, schema, createWorkspace, local test..." />
-            </label>
-          </div>
-
-          <div class="issue-summary">
-            <div class="summary-pill">
-              <strong id="issue-count">0</strong>
-              <span>visible issues</span>
-            </div>
-            <div class="summary-pill">
-              <strong>Pin versions</strong>
-              <span>highest-value team mitigation</span>
-            </div>
-            <div class="summary-pill">
-              <strong>No CDATA-specific public issue found</strong>
-              <span>behavior is mostly standards-driven</span>
-            </div>
-          </div>
-
-          <div class="issues-grid" id="issues-grid"></div>
-        </section>
-
-        <section class="panel reveal" id="team">
-          <div class="section-heading">
-            <span class="section-tag">04</span>
-            <div>
-              <h2>Team sync model</h2>
-              <p>Use the tabs to move from source-of-truth decisions to local onboarding and CI/CD expectations.</p>
-            </div>
-          </div>
-
-          <div class="readiness-hero">
-            <div class="readiness-score">
-              <strong id="readiness-score">0%</strong>
-              <span>launch readiness</span>
-            </div>
-            <p>Each onboarding checkbox increases the readiness score, which makes this section feel more like a release drill than a static note.</p>
-          </div>
-
-          <div class="tab-row" id="team-tabs">
-            <button class="tab active" data-tab="git">Git model</button>
-            <button class="tab" data-tab="local">Local setup</button>
-            <button class="tab" data-tab="pipeline">CI/CD</button>
-          </div>
-
-          <div class="tab-panels">
-            <section class="tab-panel active" data-panel="git">
-              <div class="card-grid two-up">
-                <article class="info-card accent-azure">
-                  <h3>Commit these</h3>
-                  <pre><code>Artifacts/MapDefinitions/*.lml
-Artifacts/Maps/*.xslt
-Artifacts/Schemas/*
-Artifacts/DataMapper/Extensions/*
-workflow folders + workflow.json
-connections.json
-host.json</code></pre>
-                </article>
-                <article class="info-card accent-coral">
-                  <h3>Do not commit these</h3>
-                  <pre><code>local.settings.json
-**/local.settings.json
-.vscode/settings.json (optional)
-raw secrets and machine-specific keys</code></pre>
-                </article>
-              </div>
-              <article class="info-card wide-note">
-                <h3>Critical source-of-truth rule</h3>
-                <p>
-                  Treat <code>.lml</code> as the authoring source and generated <code>.xslt</code> as the runtime source. If anyone hand-edits the generated XSLT,
-                  document that clearly because a later save from the mapper can overwrite it.
-                </p>
-              </article>
-            </section>
-
-            <section class="tab-panel" data-panel="local">
-              <div class="checklist-grid">
-                <article class="info-card accent-cyan">
-                  <h3>Clone checklist</h3>
-                  <div class="checklist" id="checklist"></div>
-                </article>
-                <article class="info-card accent-gold">
-                  <h3>Reusable snippets</h3>
-                  <div class="snippet-block">
-                    <div class="snippet-header">
-                      <span><code>local.settings.sample.json</code></span>
-                      <button class="copy-button" data-copy="local-settings">Copy</button>
-                    </div>
-                    <pre><code id="local-settings-snippet"></code></pre>
-                  </div>
-                  <div class="snippet-block">
-                    <div class="snippet-header">
-                      <span><code>.gitignore</code> additions</span>
-                      <button class="copy-button" data-copy="gitignore">Copy</button>
-                    </div>
-                    <pre><code id="gitignore-snippet"></code></pre>
-                  </div>
-                </article>
-              </div>
-            </section>
-
-            <section class="tab-panel" data-panel="pipeline">
-              <div class="pipeline-strip">
-                <span>Commit</span>
-                <span>Validate JSON / XSD / XSLT</span>
-                <span>Package app</span>
-                <span>Deploy infra</span>
-                <span>Deploy workflow</span>
-                <span>Smoke test</span>
-              </div>
-              <div class="card-grid three-up">
-                <article class="info-card accent-azure">
-                  <h3>Design-time portability</h3>
-                  <p>Parameterize <code>connections.json</code> and keep secrets local or deployment-injected.</p>
-                </article>
-                <article class="info-card accent-cyan">
-                  <h3>Validation</h3>
-                  <p>Check JSON shape, XSD and XSLT well-formedness, and required artifact presence before packaging.</p>
-                </article>
-                <article class="info-card accent-green">
-                  <h3>Runtime proof</h3>
-                  <p>Run a workflow-level smoke test after deployment because local map tests do not cover every runtime edge.</p>
-                </article>
-              </div>
-            </section>
-          </div>
-        </section>
-
-        <section class="panel reveal" id="sources">
-          <div class="section-heading">
-            <span class="section-tag">05</span>
-            <div>
-              <h2>Source trail</h2>
-              <p>Local deliverables and primary source links used for the presentation and the browser experience.</p>
-            </div>
-          </div>
-
-          <div class="card-grid two-up">
-            <article class="info-card accent-azure">
-              <h3>Local files</h3>
-              <ul class="source-list">
-                <li><a href="../research-notes.md">research-notes.md</a></li>
-                <li><a href="../open-issues-and-git-setup-notes.md">open-issues-and-git-setup-notes.md</a></li>
-                <li><a href="../team-onboarding-checklist.md">team-onboarding-checklist.md</a></li>
-                <li><a href="../PUBLISHING.md">PUBLISHING.md</a></li>
-                <li><a href="../azure-data-mapper-detailed-presentation.pptx">azure-data-mapper-detailed-presentation.pptx</a></li>
-              </ul>
-            </article>
-            <article class="info-card accent-gold">
-              <h3>Primary web references</h3>
-              <ul class="source-list" id="source-links"></ul>
-            </article>
-          </div>
-        </section>
-      </main>
-    </div>
-
-    <div class="toast-stack" id="toast-stack" aria-live="polite" aria-atomic="true"></div>
-
+    <footer class="site-footer">
+      <div class="inner">Research-backed guide for Azure Logic Apps Standard Data Mapper. Last refreshed June 8, 2026.</div>
+    </footer>
     <script src="./app.js"></script>
   </body>
-  </html>
+</html>

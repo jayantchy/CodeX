@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Data Mapper Quiz</title>
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem("azure-data-mapper-theme-v2");
+          if (theme === "dark" || theme === "light") document.documentElement.dataset.theme = theme;
+          else if (matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.dataset.theme = "dark";
+        } catch (_error) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="topbar">
+        <a class="brand" href="./index.html"><span class="brand-mark">DM</span><span>Azure Data Mapper</span></a>
+        <nav class="nav" aria-label="Primary">
+          <a href="./index.html">Intro</a>
+          <a href="./how.html">How</a>
+          <a href="./setup.html">Setup</a>
+          <a href="./sample.html">Sample</a>
+          <a href="./issues.html">Issues</a>
+          <a href="./learning.html">Learning</a>
+          <a href="./quiz.html">Quiz</a>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle>Dark</button>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="page-title">
+        <span class="kicker">Quiz</span>
+        <h1>Check the essentials</h1>
+        <p>Five quick questions. Score: <strong data-score>0/5</strong></p>
+        <div class="actions"><button class="button" type="button" data-reset-quiz>Reset quiz</button></div>
+      </section>
+
+      <section class="band" data-quiz>
+        <div class="grid two">
+          <article class="quiz-card" data-question="q1">
+            <h3>Which file is the visual Data Mapper design source?</h3>
+            <div class="answer-list">
+              <button class="answer-button" data-correct="true">The <code>.lml</code> file</button>
+              <button class="answer-button" data-correct="false">The <code>.xslt</code> file</button>
+              <button class="answer-button" data-correct="false">The <code>host.json</code> file</button>
+            </div>
+            <p class="quiz-result" hidden>The <code>.lml</code> file is the visual authoring source. The generated <code>.xslt</code> is the runtime transform.</p>
+          </article>
+
+          <article class="quiz-card" data-question="q2">
+            <h3>Which workflow action calls a Data Mapper-created map?</h3>
+            <div class="answer-list">
+              <button class="answer-button" data-correct="false">Transform XML</button>
+              <button class="answer-button" data-correct="true">Transform using Data Mapper XSLT</button>
+              <button class="answer-button" data-correct="false">Parse JSON</button>
+            </div>
+            <p class="quiz-result" hidden>Data Mapper maps are called through the Data Mapper Operations action.</p>
+          </article>
+
+          <article class="quiz-card" data-question="q3">
+            <h3>What should a developer do before testing a map locally?</h3>
+            <div class="answer-list">
+              <button class="answer-button" data-correct="true">Save the map so current XSLT is generated</button>
+              <button class="answer-button" data-correct="false">Commit <code>local.settings.json</code></button>
+              <button class="answer-button" data-correct="false">Delete the schema files</button>
+            </div>
+            <p class="quiz-result" hidden>Saving matters because the mapper test should run against the current generated XSLT.</p>
+          </article>
+
+          <article class="quiz-card" data-question="q4">
+            <h3>Which item should not be committed to Git?</h3>
+            <div class="answer-list">
+              <button class="answer-button" data-correct="false"><code>Artifacts/Maps/*.xslt</code></button>
+              <button class="answer-button" data-correct="false"><code>Artifacts/MapDefinitions/*.lml</code></button>
+              <button class="answer-button" data-correct="true"><code>local.settings.json</code></button>
+            </div>
+            <p class="quiz-result" hidden><code>local.settings.json</code> can contain local secrets and machine-specific values.</p>
+          </article>
+
+          <article class="quiz-card" data-question="q5">
+            <h3>What is a documented Data Mapper risk area?</h3>
+            <div class="answer-list">
+              <button class="answer-button" data-correct="false">All schemas are converted to CSV automatically</button>
+              <button class="answer-button" data-correct="true">Filter string comparisons can be inconsistent</button>
+              <button class="answer-button" data-correct="false">XSLT 3.0 maps are unsupported in Standard</button>
+            </div>
+            <p class="quiz-result" hidden>Microsoft Learn calls out Filter string comparison behavior as a current limitation.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><div class="inner">Quiz progress is stored only in your browser.</div></footer>
+    <script src="./app.js"></script>
+  </body>
+</html>

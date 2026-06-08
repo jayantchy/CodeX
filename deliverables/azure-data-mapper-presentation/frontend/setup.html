@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Data Mapper Setup</title>
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem("azure-data-mapper-theme-v2");
+          if (theme === "dark" || theme === "light") document.documentElement.dataset.theme = theme;
+          else if (matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.dataset.theme = "dark";
+        } catch (_error) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="topbar">
+        <a class="brand" href="./index.html"><span class="brand-mark">DM</span><span>Azure Data Mapper</span></a>
+        <nav class="nav" aria-label="Primary">
+          <a href="./index.html">Intro</a>
+          <a href="./how.html">How</a>
+          <a href="./setup.html">Setup</a>
+          <a href="./sample.html">Sample</a>
+          <a href="./issues.html">Issues</a>
+          <a href="./learning.html">Learning</a>
+          <a href="./quiz.html">Quiz</a>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle>Dark</button>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="page-title">
+        <span class="kicker">Setup</span>
+        <h1>Make local projects portable</h1>
+        <p>A team setup should let any developer clone the repo, restore local settings, open the Logic App Standard project root, and edit maps without machine-specific drift.</p>
+      </section>
+
+      <section class="band">
+        <h2>Developer machine baseline</h2>
+        <div class="grid">
+          <article class="step"><h3>1. Pin tools</h3><p>Agree on VS Code, Azure Logic Apps Standard extension, Azure Functions Core Tools, and Node/runtime versions for the team.</p></article>
+          <article class="step"><h3>2. Open the root</h3><p>Open the Standard logic app project root, where <code>host.json</code>, <code>connections.json</code>, and workflow folders live.</p></article>
+          <article class="step"><h3>3. Restore local settings</h3><p>Each developer creates their own <code>local.settings.json</code>. Do not commit secrets or connection strings.</p></article>
+        </div>
+      </section>
+
+      <section class="band split">
+        <div>
+          <h2>Commit and ignore rules</h2>
+          <p class="lead">Commit the artifacts that define the map and workflow. Ignore files that are secrets, machine state, or per-user editor preferences.</p>
+          <table class="table">
+            <thead><tr><th>Commit</th><th>Ignore</th></tr></thead>
+            <tbody>
+              <tr><td><code>Artifacts/MapDefinitions/*.lml</code></td><td><code>local.settings.json</code></td></tr>
+              <tr><td><code>Artifacts/Maps/*.xslt</code></td><td><code>**/local.settings.json</code></td></tr>
+              <tr><td><code>Artifacts/Schemas/*</code></td><td><code>.vscode/settings.json</code> if personal</td></tr>
+              <tr><td><code>workflow.json</code>, <code>connections.json</code>, <code>host.json</code></td><td>Raw keys, connection strings, and generated clutter</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <pre><code>{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "WORKFLOWS_SUBSCRIPTION_ID": "",
+    "WORKFLOWS_RESOURCE_GROUP_NAME": "",
+    "APP_KIND": "workflowapp"
+  }
+}</code></pre>
+      </section>
+
+      <section class="band">
+        <h2>Pull request checks</h2>
+        <div class="grid two">
+          <article class="card"><h3>Map review</h3><p>Review the <code>.lml</code> design intent and the generated <code>.xslt</code> together. A visual save can regenerate runtime code.</p></article>
+          <article class="card"><h3>Artifact presence</h3><p>Confirm schemas, map definitions, maps, workflow folders, <code>host.json</code>, and <code>connections.json</code> are present before packaging.</p></article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><div class="inner">Local setup guidance is based on Logic Apps Standard project and DevOps deployment documentation.</div></footer>
+    <script src="./app.js"></script>
+  </body>
+</html>

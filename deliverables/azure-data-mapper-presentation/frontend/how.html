@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>How Data Mapper Works</title>
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem("azure-data-mapper-theme-v2");
+          if (theme === "dark" || theme === "light") document.documentElement.dataset.theme = theme;
+          else if (matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.dataset.theme = "dark";
+        } catch (_error) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="topbar">
+        <a class="brand" href="./index.html"><span class="brand-mark">DM</span><span>Azure Data Mapper</span></a>
+        <nav class="nav" aria-label="Primary">
+          <a href="./index.html">Intro</a>
+          <a href="./how.html">How</a>
+          <a href="./setup.html">Setup</a>
+          <a href="./sample.html">Sample</a>
+          <a href="./issues.html">Issues</a>
+          <a href="./learning.html">Learning</a>
+          <a href="./quiz.html">Quiz</a>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle>Dark</button>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="page-title">
+        <span class="kicker">How</span>
+        <h1>From schema to XSLT</h1>
+        <p>Data Mapper is a visual authoring layer over XSLT. The workflow still needs a map artifact at runtime, so the generated files and folders are part of the design.</p>
+      </section>
+
+      <section class="band">
+        <h2>The artifact flow</h2>
+        <div class="flow">
+          <span>Source schema</span>
+          <span>Target schema</span>
+          <span>.lml design</span>
+          <span>.xslt transform</span>
+          <span>Workflow action</span>
+        </div>
+      </section>
+
+      <section class="band split">
+        <div>
+          <h2>What the mapper saves</h2>
+          <p class="lead">When you save a map, Visual Studio Code creates a Data Mapper definition and a generated XSLT file. Review both in pull requests because they answer different questions.</p>
+          <table class="table">
+            <thead>
+              <tr><th>Artifact</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>Artifacts/MapDefinitions/*.lml</code></td><td>Visual source used by the mapper canvas.</td></tr>
+              <tr><td><code>Artifacts/Maps/*.xslt</code></td><td>Executable transform used by the workflow runtime.</td></tr>
+              <tr><td><code>Artifacts/Schemas/*</code></td><td>XML or JSON schemas used for source and target trees.</td></tr>
+              <tr><td><code>Artifacts/DataMapper/Extensions/*</code></td><td>Inline XSLT and custom function extensions.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <figure class="visual-panel">
+          <img src="https://learn.microsoft.com/azure/logic-apps/media/create-maps-data-transformation-visual-studio-code/added-source-schema.png" alt="Data Mapper source schema pane populated with source schema nodes" />
+          <figcaption class="caption">Schemas become source and destination node trees in the mapping surface.</figcaption>
+        </figure>
+      </section>
+
+      <section class="band split">
+        <div>
+          <h2>How a workflow calls the map</h2>
+          <p class="lead">For Data Mapper-created maps, use the Data Mapper Operations action named <code>Transform using Data Mapper XSLT</code>. Microsoft calls out this distinction because maps created by other tools use the XML Operations transform path.</p>
+          <div class="callout">Keep <code>Map Source</code> as <code>LogicApp</code> and choose the generated <code>.xslt</code> map name from the workflow action.</div>
+        </div>
+        <figure class="visual-panel">
+          <img src="https://learn.microsoft.com/azure/logic-apps/media/create-maps-data-transformation-visual-studio-code/transform-data-mapper-xslt-action.png" alt="Workflow designer showing Transform using Data Mapper XSLT action" />
+          <figcaption class="caption">The workflow references the generated XSLT map from the Logic App project.</figcaption>
+        </figure>
+      </section>
+    </main>
+
+    <footer class="site-footer"><div class="inner">Source: Microsoft Learn Azure Logic Apps Data Mapper documentation.</div></footer>
+    <script src="./app.js"></script>
+  </body>
+</html>

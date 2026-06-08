@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Data Mapper Issues</title>
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem("azure-data-mapper-theme-v2");
+          if (theme === "dark" || theme === "light") document.documentElement.dataset.theme = theme;
+          else if (matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.dataset.theme = "dark";
+        } catch (_error) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="topbar">
+        <a class="brand" href="./index.html"><span class="brand-mark">DM</span><span>Azure Data Mapper</span></a>
+        <nav class="nav" aria-label="Primary">
+          <a href="./index.html">Intro</a>
+          <a href="./how.html">How</a>
+          <a href="./setup.html">Setup</a>
+          <a href="./sample.html">Sample</a>
+          <a href="./issues.html">Issues</a>
+          <a href="./learning.html">Learning</a>
+          <a href="./quiz.html">Quiz</a>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle>Dark</button>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="page-title">
+        <span class="kicker">Issues</span>
+        <h1>Known friction points</h1>
+        <p>Use this page as a triage checklist before you assume the map logic is wrong. Several local testing and authoring behaviors are already documented or publicly reported.</p>
+      </section>
+
+      <section class="band">
+        <h2>Microsoft documented limitations</h2>
+        <div class="grid">
+          <article class="issue"><h3>Authoring surface</h3><p>Data Mapper authoring is documented for Visual Studio Code and Standard logic app projects, not Consumption projects.</p><span class="badge medium">Product scope</span></article>
+          <article class="issue"><h3>Operating system</h3><p>Microsoft Learn currently lists Data Mapper as working only in VS Code on Windows.</p><span class="badge high">Team setup risk</span></article>
+          <article class="issue"><h3>Filter behavior</h3><p>The Filter function is documented as inconsistent for string comparisons while numeric conditions are called out as working when quoted.</p><span class="badge high">Local test risk</span></article>
+        </div>
+      </section>
+
+      <section class="band">
+        <h2>Public issue radar</h2>
+        <div class="grid two">
+          <article class="issue">
+            <h3><a href="https://github.com/Azure/LogicAppsUX/issues/8507" target="_blank" rel="noreferrer">#8507 Repeating Filter path issue</a></h3>
+            <p>Filter on repeating data can generate wrong paths for downstream child functions.</p>
+            <div class="badge-row"><span class="badge high">High risk</span><span class="badge">Local testing</span></div>
+          </article>
+          <article class="issue">
+            <h3><a href="https://github.com/Azure/LogicAppsUX/issues/6205" target="_blank" rel="noreferrer">#6205 Filter string comparison</a></h3>
+            <p>String comparison behavior in the mapper test path can be unreliable enough to require direct XSLT review.</p>
+            <div class="badge-row"><span class="badge high">High risk</span><span class="badge">Filter</span></div>
+          </article>
+          <article class="issue">
+            <h3><a href="https://github.com/Azure/LogicAppsUX/issues/6924" target="_blank" rel="noreferrer">#6924 Referenced JSON schema</a></h3>
+            <p>JSON schemas that rely on references can fail to load, which affects portability across machines.</p>
+            <div class="badge-row"><span class="badge high">High risk</span><span class="badge">Schemas</span></div>
+          </article>
+          <article class="issue">
+            <h3><a href="https://github.com/Azure/LogicAppsUX/issues/6802" target="_blank" rel="noreferrer">#6802 Same basename collision</a></h3>
+            <p>Using the same file stem for JSON and XML schemas can make the wrong schema load.</p>
+            <div class="badge-row"><span class="badge high">High risk</span><span class="badge">Schemas</span></div>
+          </article>
+          <article class="issue">
+            <h3><a href="https://github.com/Azure/LogicAppsUX/issues/7623" target="_blank" rel="noreferrer">#7623 Project not recognized</a></h3>
+            <p>A clean clone can fail early if VS Code opens the wrong folder or project recognition regresses.</p>
+            <div class="badge-row"><span class="badge medium">Medium</span><span class="badge">Workspace</span></div>
+          </article>
+          <article class="issue">
+            <h3><a href="https://github.com/Azure/LogicAppsUX/issues/8509" target="_blank" rel="noreferrer">#8509 Regenerate XSLT request</a></h3>
+            <p>Teams still need discipline around saving maps before using the test panel or reviewing generated XSLT.</p>
+            <div class="badge-row"><span class="badge medium">Watch</span><span class="badge">Workflow</span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="band">
+        <h2>Practical mitigations</h2>
+        <div class="grid">
+          <article class="card"><h3>Pin versions</h3><p>Keep the VS Code extension version consistent during a sprint. Move everyone together after testing.</p></article>
+          <article class="card"><h3>Save before testing</h3><p>Local test results are only meaningful after the current <code>.xslt</code> has been regenerated.</p></article>
+          <article class="card"><h3>Use sample fixtures</h3><p>Keep representative JSON/XML samples in source control so regressions are visible in pull requests.</p></article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><div class="inner">Issue list is curated from Microsoft Learn limitations and public Azure/LogicAppsUX GitHub reports.</div></footer>
+    <script src="./app.js"></script>
+  </body>
+</html>

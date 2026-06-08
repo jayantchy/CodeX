@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Data Mapper Sample</title>
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem("azure-data-mapper-theme-v2");
+          if (theme === "dark" || theme === "light") document.documentElement.dataset.theme = theme;
+          else if (matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.dataset.theme = "dark";
+        } catch (_error) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="topbar">
+        <a class="brand" href="./index.html"><span class="brand-mark">DM</span><span>Azure Data Mapper</span></a>
+        <nav class="nav" aria-label="Primary">
+          <a href="./index.html">Intro</a>
+          <a href="./how.html">How</a>
+          <a href="./setup.html">Setup</a>
+          <a href="./sample.html">Sample</a>
+          <a href="./issues.html">Issues</a>
+          <a href="./learning.html">Learning</a>
+          <a href="./quiz.html">Quiz</a>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle>Dark</button>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="page-title">
+        <span class="kicker">Sample</span>
+        <h1>A small order mapping</h1>
+        <p>This example keeps the idea deliberately small: normalize a partner order payload into a canonical order shape, then test the map before adding it to the workflow.</p>
+      </section>
+
+      <section class="band grid two">
+        <article class="card">
+          <h3>Source payload</h3>
+          <pre><code>{
+  "partnerOrder": {
+    "id": "PO-1042",
+    "orderedOn": "20260608",
+    "buyer": { "name": "Contoso Retail" },
+    "items": [
+      { "sku": "A-100", "qty": 2, "price": 19.5 }
+    ]
+  }
+}</code></pre>
+        </article>
+        <article class="card">
+          <h3>Target payload</h3>
+          <pre><code>{
+  "orderId": "PO-1042",
+  "orderDate": "2026-06-08",
+  "customerName": "Contoso Retail",
+  "lines": [
+    { "itemCode": "A-100", "quantity": 2, "lineTotal": 39 }
+  ]
+}</code></pre>
+        </article>
+      </section>
+
+      <section class="band split">
+        <div>
+          <h2>Mapping notes</h2>
+          <div class="grid">
+            <article class="card"><h3>Direct copy</h3><p><code>id</code> becomes <code>orderId</code>, and <code>buyer.name</code> becomes <code>customerName</code>.</p></article>
+            <article class="card"><h3>Date normalization</h3><p>Format <code>YYYYMMDD</code> into an ISO-style date string before downstream systems consume it.</p></article>
+            <article class="card"><h3>Repeating lines</h3><p>Map parent arrays and child item fields explicitly so loops are visible and testable.</p></article>
+          </div>
+        </div>
+        <figure class="visual-panel">
+          <img src="https://learn.microsoft.com/azure/logic-apps/media/create-maps-data-transformation-visual-studio-code/run-xslt.png" alt="Data Mapper Run XSLT function selected in the mapping surface" />
+          <figcaption class="caption">Inline XSLT is useful when a visual function chain would become harder to maintain than a small transform.</figcaption>
+        </figure>
+      </section>
+
+      <section class="band split">
+        <div>
+          <h2>XSLT 3.0 style helper</h2>
+          <p class="lead">Data Mapper supports XSLT artifacts and custom XML functions that follow an XSLT 3.0 style. Use this for transformations that benefit from reusable logic.</p>
+        </div>
+        <pre><code>&lt;xsl:function name="dm:iso-date" as="xs:string"&gt;
+  &lt;xsl:param name="dateText" as="xs:string" /&gt;
+  &lt;xsl:sequence select="
+    concat(
+      substring($dateText, 1, 4), '-',
+      substring($dateText, 5, 2), '-',
+      substring($dateText, 7, 2)
+    )
+  " /&gt;
+&lt;/xsl:function&gt;</code></pre>
+      </section>
+    </main>
+
+    <footer class="site-footer"><div class="inner">Save before local testing so the generated XSLT reflects the current map design.</div></footer>
+    <script src="./app.js"></script>
+  </body>
+</html>
