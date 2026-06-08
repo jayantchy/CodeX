@@ -1,0 +1,10 @@
+# Logic Apps Standard local secrets
+local.settings.json
+**/local.settings.json
+
+# Optional VS Code per-user workspace settings
+.vscode/settings.json
+
+# OS noise
+.DS_Store
+Thumbs.db
