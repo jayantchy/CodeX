@@ -129,7 +129,64 @@ function initScrollAnimations() {
   elements.forEach(el => observer.observe(el));
 }
 
+function initCanvasNodes() {
+  const nodes = document.querySelectorAll('.logic-node[data-url]');
+  const sidePanel = document.getElementById('side-panel');
+  const panelContent = document.getElementById('side-panel-content');
+  const panelTitle = document.getElementById('side-panel-title');
+  const closeBtn = document.getElementById('close-panel');
+
+  if (!sidePanel || nodes.length === 0) return;
+
+  function closePanel() {
+    sidePanel.classList.remove('open');
+    nodes.forEach(n => n.classList.remove('active'));
+  }
+
+  closeBtn?.addEventListener('click', closePanel);
+
+  nodes.forEach(node => {
+    node.addEventListener('click', async (e) => {
+      if (e.target.closest('.split-node') && node.classList.contains('split-node')) return;
+      
+      nodes.forEach(n => n.classList.remove('active'));
+      node.classList.add('active');
+      
+      const url = node.dataset.url;
+      const title = node.querySelector('h3').textContent;
+      panelTitle.textContent = title;
+      
+      try {
+        panelContent.innerHTML = '<div class="placeholder-content"><span class="kicker">Loading</span><h2>Fetching data...</h2></div>';
+        sidePanel.classList.add('open');
+        
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Network error');
+        const text = await response.text();
+        
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+        const pageContent = doc.querySelector('.page');
+        
+        if (pageContent) {
+          panelContent.innerHTML = '';
+          panelContent.appendChild(pageContent);
+          initQuiz();
+          initScrollAnimations();
+        } else {
+          panelContent.innerHTML = '<div class="placeholder-content"><span class="kicker">Error</span><h2>Content not found.</h2></div>';
+        }
+      } catch (err) {
+        console.error('Failed to load content:', err);
+        panelContent.innerHTML = '<div class="placeholder-content"><span class="kicker">Error</span><h2>Failed to load content.</h2><p>Please ensure you are running this on a web server (e.g., GitHub Pages or local server) as file:// protocol blocks fetch requests.</p></div>';
+      }
+    });
+  });
+}
+
 initTheme();
 initNav();
 initQuiz();
 initScrollAnimations();
+initCanvasNodes();
+

@@ -286,3 +286,198 @@ pre {
   .nav { width: 100%; padding-bottom: 8px; }
   .hero-copy h1, .page-title h1 { font-size: 2.5rem; }
 }
+
+/* --- Logic App Canvas & Side Panel Architecture --- */
+.workspace {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 73px); /* Full height minus header */
+  overflow: hidden;
+  position: relative;
+}
+
+.logic-app-canvas {
+  flex: 1;
+  overflow-y: auto;
+  padding: 60px 20px 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  background: 
+    linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 40px 40px,
+    linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 40px 40px;
+  background-color: transparent;
+}
+
+.node-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  position: relative;
+  z-index: 2;
+}
+
+.logic-node {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface-solid);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.logic-node:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 120, 212, 0.15);
+  border-color: var(--accent);
+}
+
+.logic-node.active {
+  border-color: var(--accent-2);
+  box-shadow: 0 0 0 2px var(--accent-2), 0 12px 24px rgba(0, 188, 189, 0.2);
+}
+
+.node-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  font-size: 1.5rem;
+  background: var(--surface-2);
+  border-right: 1px solid var(--line);
+}
+
+.trigger-node .node-icon { background: rgba(16, 185, 129, 0.1); color: var(--ok); }
+.action-node .node-icon { background: rgba(0, 120, 212, 0.1); color: var(--accent); }
+.condition-node .node-icon { background: rgba(245, 158, 11, 0.1); color: var(--accent-3); }
+
+.node-content {
+  padding: 12px 16px;
+  flex: 1;
+}
+
+.node-content h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-family: var(--font-heading);
+  color: var(--ink);
+}
+
+.node-content p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.connector-arrow {
+  color: var(--muted);
+  font-size: 1.5rem;
+  margin: 8px 0;
+  opacity: 0.6;
+}
+
+.split-node {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  max-width: 600px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+.split-node:hover { transform: none; box-shadow: none; border: none; }
+.split-node .logic-node { flex: 1; }
+
+.side-panel {
+  width: 0;
+  background: var(--surface-solid);
+  border-left: 1px solid var(--line);
+  box-shadow: -10px 0 30px rgba(0,0,0,0.05);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 10;
+}
+
+.side-panel.open {
+  width: min(750px, 100vw);
+}
+
+.side-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+}
+
+.side-panel-header h2 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+}
+
+.close-panel {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.close-panel:hover { color: var(--danger); }
+
+.side-panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.side-panel-content .page {
+  padding: 32px 40px;
+  width: 100%;
+  margin: 0;
+  animation: fade-in 0.4s ease;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.placeholder-content {
+  padding: 80px 40px;
+  text-align: center;
+}
+
+.placeholder-content .kicker {
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.placeholder-content h2 {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .workspace { position: relative; }
+  .side-panel.open {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+  }
+}

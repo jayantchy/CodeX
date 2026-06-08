@@ -21,7 +21,7 @@
       <div class="topbar">
         <a class="brand" href="./index.html"><span class="brand-mark">DM</span><span>Azure Data Mapper</span></a>
         <nav class="nav" aria-label="Primary">
-          <a href="./index.html">Intro</a>
+          <a href="./index.html">Canvas</a>
           <a href="./how.html">How</a>
           <a href="./setup.html">Setup</a>
           <a href="./sample.html">Sample</a>
@@ -33,62 +33,89 @@
       </div>
     </header>
 
-    <main class="page">
-      <section class="hero">
-        <div class="hero-copy">
-          <span class="kicker">Logic Apps Standard</span>
-          <h1>Data mapping without the wall of text</h1>
-          <p>
-            A focused guide to Azure Logic Apps Data Mapper: what it is, how the generated XSLT fits into a workflow,
-            how to set up a team project, what to test locally, and where the current product rough edges are.
-          </p>
-          <div class="hero-actions">
-            <a class="button primary" href="./how.html">Start with how it works</a>
-            <a class="button" href="./sample.html">See a sample map</a>
+    <div class="workspace">
+      <!-- The main visual canvas resembling Logic Apps -->
+      <main class="logic-app-canvas" id="canvas">
+        <svg class="canvas-connectors" width="100%" height="100%">
+          <!-- Connectors will be drawn via CSS/JS or absolute positioning but let's use a nice SVG background line pattern -->
+        </svg>
+        
+        <div class="node-container">
+          <div class="logic-node trigger-node animate-on-scroll" data-url="./how.html">
+            <div class="node-icon">⚡</div>
+            <div class="node-content">
+              <h3>1. How it works</h3>
+              <p>Understanding the XSLT flow</p>
+            </div>
+          </div>
+
+          <div class="connector-arrow">↓</div>
+
+          <div class="logic-node action-node animate-on-scroll" data-url="./setup.html">
+            <div class="node-icon">⚙️</div>
+            <div class="node-content">
+              <h3>2. Team Setup</h3>
+              <p>Git and local environment</p>
+            </div>
+          </div>
+
+          <div class="connector-arrow">↓</div>
+
+          <div class="logic-node action-node animate-on-scroll" data-url="./sample.html">
+            <div class="node-icon">📊</div>
+            <div class="node-content">
+              <h3>3. Sample Map</h3>
+              <p>See a real-world scenario</p>
+            </div>
+          </div>
+
+          <div class="connector-arrow">↓</div>
+
+          <div class="logic-node split-node animate-on-scroll">
+            <div class="logic-node action-node" data-url="./issues.html">
+              <div class="node-icon">⚠️</div>
+              <div class="node-content">
+                <h3>4a. Issues</h3>
+                <p>Known limitations</p>
+              </div>
+            </div>
+            <div class="logic-node action-node" data-url="./learning.html">
+              <div class="node-icon">📚</div>
+              <div class="node-content">
+                <h3>4b. Learning</h3>
+                <p>Resources & Docs</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="connector-arrow">↓</div>
+
+          <div class="logic-node condition-node animate-on-scroll" data-url="./quiz.html">
+            <div class="node-icon">❓</div>
+            <div class="node-content">
+              <h3>5. Knowledge Check</h3>
+              <p>Test your understanding</p>
+            </div>
           </div>
         </div>
-        <figure class="visual-panel">
-          <img src="https://learn.microsoft.com/azure/logic-apps/media/create-maps-data-transformation-visual-studio-code/create-data-map.png" alt="Visual Studio Code Azure pane showing Create data map for Logic Apps Data Mapper" />
-          <figcaption class="caption">Data Mapper starts inside a Standard logic app project in Visual Studio Code.</figcaption>
-        </figure>
-      </section>
+      </main>
 
-      <section class="band">
-        <h2>What to remember first</h2>
-        <div class="grid">
-          <article class="card">
-            <h3>It is Standard-only authoring</h3>
-            <p>Microsoft documents Data Mapper authoring in Visual Studio Code inside Azure Logic Apps Standard projects.</p>
-          </article>
-          <article class="card">
-            <h3>Two files matter</h3>
-            <p>The visual map is saved as <code>.lml</code> and the executable transform is generated as <code>.xslt</code>.</p>
-          </article>
-          <article class="card">
-            <h3>The action is specific</h3>
-            <p>Maps created with Data Mapper are called with <code>Transform using Data Mapper XSLT</code>, not the older Transform XML action.</p>
-          </article>
+      <!-- The side panel for progressive disclosure -->
+      <aside class="side-panel" id="side-panel">
+        <div class="side-panel-header">
+          <h2 id="side-panel-title">Properties</h2>
+          <button class="close-panel" id="close-panel">✕</button>
         </div>
-      </section>
+        <div class="side-panel-content" id="side-panel-content">
+          <div class="placeholder-content">
+            <span class="kicker">Azure Logic Apps</span>
+            <h2>Select an action</h2>
+            <p>Click on any workflow node in the canvas to view its configuration and documentation here.</p>
+          </div>
+        </div>
+      </aside>
+    </div>
 
-      <section class="band split">
-        <div>
-          <h2>Recommended path</h2>
-          <p class="lead">Use this site as a short walkthrough rather than a reference dump. The pages follow the sequence a team usually needs.</p>
-        </div>
-        <div class="flow">
-          <span>Introduction</span>
-          <span>How it works</span>
-          <span>Team setup</span>
-          <span>Sample map</span>
-          <span>Issues and quiz</span>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <div class="inner">Research-backed guide for Azure Logic Apps Standard Data Mapper. Last refreshed June 8, 2026.</div>
-    </footer>
     <script src="./app.js"></script>
   </body>
 </html>
