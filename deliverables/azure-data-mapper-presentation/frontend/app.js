@@ -12,18 +12,33 @@ const themeToggle = document.querySelector("[data-theme-toggle]");
 function storedTheme() {
   try {
     const value = localStorage.getItem(THEME_KEY);
-    return value === "dark" || value === "light" ? value : null;
+    return value === "dark" || value === "light" || value === "azure" ? value : null;
   } catch (_error) {
     return null;
   }
 }
 
 function setTheme(theme, persist = false) {
-  const next = theme === "dark" ? "dark" : "light";
+  let next = "light";
+  let label = "☀ Light";
+  
+  if (theme === "dark") {
+    next = "dark";
+    label = "☾ Dark";
+  } else if (theme === "azure") {
+    next = "azure";
+    label = "☁ Azure";
+  }
+
   document.documentElement.dataset.theme = next;
   if (themeToggle) {
-    themeToggle.textContent = next === "dark" ? "☀ Light" : "☾ Dark";
-    themeToggle.setAttribute("aria-label", next === "dark" ? "Switch to light mode" : "Switch to dark mode");
+    // Next theme to switch TO when clicked
+    let nextToggle = "☾ Dark";
+    if (next === "dark") nextToggle = "☁ Azure";
+    else if (next === "azure") nextToggle = "☀ Light";
+    
+    themeToggle.textContent = nextToggle;
+    themeToggle.setAttribute("aria-label", "Switch to " + nextToggle + " mode");
   }
   if (persist) {
     try {
@@ -38,7 +53,11 @@ function initTheme() {
   const initial = document.documentElement.dataset.theme || storedTheme() || (systemTheme?.matches ? "dark" : "light");
   setTheme(initial);
   themeToggle?.addEventListener("click", () => {
-    setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark", true);
+    const current = document.documentElement.dataset.theme;
+    let nextTheme = "dark";
+    if (current === "dark") nextTheme = "azure";
+    else if (current === "azure") nextTheme = "light";
+    setTheme(nextTheme, true);
   });
   systemTheme?.addEventListener("change", () => {
     if (!storedTheme()) setTheme(systemTheme.matches ? "dark" : "light");

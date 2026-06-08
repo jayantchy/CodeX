@@ -68,10 +68,29 @@ html[data-theme="dark"] {
   --glow-teal: 0 0 30px rgba(45, 212, 191, 0.3);
 }
 
-html[data-theme="dark"] body::before {
-  opacity: 1;
-  background: radial-gradient(circle at 50% 50%, #162638 0%, #0c1b2e 100%);
+html[data-theme="azure"] {
+  color-scheme: dark;
+  --bg: #002B49;
+  --bg-canvas: #00223A;
+  --surface: rgba(0, 51, 89, 0.85);
+  --surface-solid: #003359;
+  --surface-2: rgba(0, 64, 112, 0.85);
+  --surface-elevated: rgba(0, 75, 130, 0.95);
+  --ink: #FFFFFF;
+  --muted: #A0C2E0;
+  --line: rgba(0, 183, 195, 0.3);
+  --accent: #50E6FF;
+  --accent-2: #00B7C3;
+  --accent-3: #F7630C;
+  --danger: #D13438;
+  --ok: #0E7A0D;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6), 0 4px 16px rgba(0, 0, 0, 0.3);
+  --glow: 0 0 30px rgba(80, 230, 255, 0.4);
+  --glow-teal: 0 0 30px rgba(0, 183, 195, 0.4);
 }
+
+
 
 /* ═══════════════════════════════════════════════════════════
    BASE
@@ -97,8 +116,12 @@ body::before {
   inset: 0;
   pointer-events: none;
   z-index: -2;
-  background: radial-gradient(circle at 50% 50%, #ffffff 0%, #eef3f9 100%);
-  opacity: 1;
+  background-image: url('./azure-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.12;
+  filter: blur(4px) saturate(120%);
 }
 
 body::after {

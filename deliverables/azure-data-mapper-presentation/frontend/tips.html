@@ -10,7 +10,7 @@
       (function () {
         try {
           var theme = localStorage.getItem("azure-data-mapper-theme-v2");
-          if (theme === "dark" || theme === "light") document.documentElement.dataset.theme = theme;
+          if (theme === "dark" || theme === "light" || theme === "azure") document.documentElement.dataset.theme = theme;
           else if (matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.dataset.theme = "dark";
         } catch (_error) {}
       })();
